@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using CsvProc9000.Options;
 using CsvProc9000.Workers;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +51,8 @@ namespace CsvProc9000
         {
             var processorOptionsSection = context.Configuration.GetSection("CsvProcessorOptions");
             services.Configure<CsvProcessorOptions>(processorOptionsSection);
+
+            services.AddSingleton<IFileSystem, FileSystem>();
             
             services.AddHostedService<CsvProcessorWorker>();
         }
