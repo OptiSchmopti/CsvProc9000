@@ -42,13 +42,20 @@ namespace CsvProc9000.Processors
                 return false;
             }
             
-            // ReSharper disable once InvertIf
             if (file.IsReadOnly)
             {
                 _logger.LogDebug("Cannot process file {File}, because it is read-only", file.FullName);
                 return false;
             }
-            
+
+            // ReSharper disable once InvertIf
+            if (!file.Extension.Equals(".csv"))
+            {
+                _logger.LogDebug("Cannot process file {File}, because it has file-extensions '{Extension}' instead of '.csv'",
+                    file.FullName, file.Extension);
+                return false;
+            }
+
             return true;
         }
 
