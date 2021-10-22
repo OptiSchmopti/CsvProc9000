@@ -1,4 +1,5 @@
 using System;
+using CsvProc9000.Options;
 using CsvProc9000.Workers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -47,6 +48,9 @@ namespace CsvProc9000
 
         private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
+            var processorOptionsSection = context.Configuration.GetSection("CsvProcessorOptions");
+            services.Configure<CsvProcessorOptions>(processorOptionsSection);
+            
             services.AddHostedService<CsvProcessorWorker>();
         }
     }
