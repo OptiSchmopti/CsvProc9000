@@ -6,7 +6,9 @@ using CsvProc9000.Workers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace CsvProc9000
 {
@@ -38,6 +40,9 @@ namespace CsvProc9000
                 {
                     var logger = ConfigureLogging(context.Configuration);
                     builder.AddSerilog(logger);
+
+                    builder.AddFilter("Microsoft", LogLevel.Warning);
+                    builder.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Warning);
                 })
                 .ConfigureServices(ConfigureServices);
         }
@@ -45,6 +50,7 @@ namespace CsvProc9000
         private static ILogger ConfigureLogging(IConfiguration configuration)
         {
             var logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.File("./logs/application-log.log")
