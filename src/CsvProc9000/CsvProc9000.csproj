@@ -24,6 +24,9 @@
 
     <ItemGroup>
       <None Remove="logs\**" />
+      <None Update="CreateService.bat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
