@@ -17,6 +17,7 @@ namespace CsvProc9000
         {
             return Host
                 .CreateDefaultBuilder(args)
+                .UseWindowsService()
                 .ConfigureServices((_, services) =>
                 {
                     services.AddHostedService<CsvProcessorWorker>();
