@@ -2,6 +2,7 @@ using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using CsvProc9000.Options;
+using CsvProc9000.Processors;
 using CsvProc9000.Workers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +39,9 @@ namespace CsvProc9000
                 .UseWindowsService()
                 .ConfigureLogging((context, builder) =>
                 {
-                    var logger = ConfigureLogging(context.Configuration);
+                    builder.ClearProviders();
+                    
+                    var logger = ConfigureSerilogLogging(context.Configuration);
                     builder.AddSerilog(logger);
 
                     builder.AddFilter("Microsoft", LogLevel.Warning);
@@ -47,7 +50,7 @@ namespace CsvProc9000
                 .ConfigureServices(ConfigureServices);
         }
 
-        private static ILogger ConfigureLogging(IConfiguration configuration)
+        private static ILogger ConfigureSerilogLogging(IConfiguration configuration)
         {
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
@@ -67,6 +70,7 @@ namespace CsvProc9000
             services.Configure<CsvProcessorOptions>(processorOptionsSection);
 
             services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddSingleton<ICsvProcessor, CsvProcessor>();
             
             services.AddHostedService<CsvProcessorWorker>();
         }
