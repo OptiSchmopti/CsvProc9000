@@ -61,8 +61,17 @@ namespace CsvProc9000.Processors
 
             _logger.LogInformation("Processor: Moving file {File} to {Output}", file.FullName, _processorOptions.Output);
 
+            MoveFileToOutput(file);
+        }
+
+        private void MoveFileToOutput(IFileInfo file)
+        {
             var fileName = file.Name;
             var destinationFileName = _fileSystem.Path.Combine(_processorOptions.Output, fileName);
+
+            if (_fileSystem.Directory.Exists(_processorOptions.Output))
+                _fileSystem.Directory.CreateDirectory(_processorOptions.Output);
+            
             file.MoveTo(destinationFileName, true);
         }
 
