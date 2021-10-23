@@ -31,14 +31,14 @@ namespace CsvProc9000.Workers
             _csvProcessor = csvProcessor ?? throw new ArgumentNullException(nameof(csvProcessor));
             _processorOptions = processorOptions?.Value ?? throw new ArgumentNullException(nameof(processorOptions));
 
-            _fileSystemWatcher = fileSystem.FileSystemWatcher.CreateNew(_processorOptions.WatchTarget);
+            _fileSystemWatcher = fileSystem.FileSystemWatcher.CreateNew(_processorOptions.Inbox);
 
             _fileSystemWatcher.Created += OnFileCreated;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting to watch for files in {Target}...", _processorOptions.WatchTarget);
+            _logger.LogInformation("Starting to watch for files in {Target}...", _processorOptions.Inbox);
             _fileSystemWatcher.EnableRaisingEvents = true;
             
             return Task.CompletedTask;

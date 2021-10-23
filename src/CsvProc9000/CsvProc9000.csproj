@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
         <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />

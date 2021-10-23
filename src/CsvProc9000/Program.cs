@@ -66,7 +66,7 @@ namespace CsvProc9000
 
         private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            var processorOptionsSection = context.Configuration.GetSection("CsvProcessorOptions");
+            var processorOptionsSection = context.Configuration.GetSection("CsvProcessor");
             services.Configure<CsvProcessorOptions>(processorOptionsSection);
 
             services.AddSingleton<IFileSystem, FileSystem>();

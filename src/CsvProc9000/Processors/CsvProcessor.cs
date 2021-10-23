@@ -66,7 +66,7 @@ namespace CsvProc9000.Processors
             // simulating work for now
             await Task.Delay(TimeSpan.FromSeconds(1));
 
-            _logger.LogInformation("Processor: Moving file {File} to {Output}", file.FullName, _processorOptions.Output);
+            _logger.LogInformation("Processor: Moving file {File} to {Output}", file.FullName, _processorOptions.Outbox);
 
             MoveFileToOutput(file);
         }
@@ -74,10 +74,10 @@ namespace CsvProc9000.Processors
         private void MoveFileToOutput(IFileInfo file)
         {
             var fileName = file.Name;
-            var destinationFileName = _fileSystem.Path.Combine(_processorOptions.Output, fileName);
+            var destinationFileName = _fileSystem.Path.Combine(_processorOptions.Outbox, fileName);
 
-            if (_fileSystem.Directory.Exists(_processorOptions.Output))
-                _fileSystem.Directory.CreateDirectory(_processorOptions.Output);
+            if (_fileSystem.Directory.Exists(_processorOptions.Outbox))
+                _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
             
             file.MoveTo(destinationFileName, true);
         }

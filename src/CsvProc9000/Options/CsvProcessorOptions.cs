@@ -1,8 +1,13 @@
-﻿namespace CsvProc9000.Options
+﻿using JetBrains.Annotations;
+
+namespace CsvProc9000.Options
 {
     public class CsvProcessorOptions
     {
-        public string WatchTarget { get; set; }
-        public string Output { get; set; }
+        [UsedImplicitly]
+        public string Inbox { get; set; }
+        
+        [UsedImplicitly]
+        public string Outbox { get; set; }
     }
 }
