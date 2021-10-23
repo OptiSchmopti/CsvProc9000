@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace CsvProc9000.Options
 {
@@ -15,5 +16,8 @@ namespace CsvProc9000.Options
         
         [UsedImplicitly]
         public string OutboxDelimiter { get; set; }
+        
+        [UsedImplicitly]
+        public List<Rule> Rules { get; set; }
     }
 }

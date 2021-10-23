@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
@@ -32,44 +33,45 @@ namespace CsvProc9000.Csv
             };
             using var csvReader = new CsvHelper.CsvReader(streamReader, configuration);
 
-            var csvFile = await CreateCsvFileFromHeader(fileName, csvReader);
-            await ProcessCsvRows(csvReader, csvFile);
+            var csvFile = new CsvFile(fileName);
+            var headers = await GetHeaders(fileName, csvReader);
+            await ProcessCsvRows(csvReader, csvFile, headers);
 
             return csvFile;
         }
 
-        private static async Task<CsvFile> CreateCsvFileFromHeader(string fileName, IReader csvReader)
+        private static async Task<IEnumerable<string>> GetHeaders(string fileName, IReader csvReader)
         {
             await csvReader.ReadAsync();
             if (!csvReader.ReadHeader())
                 throw new InvalidOperationException($"Could not read header of file {fileName}");
 
-            var header = csvReader.HeaderRecord;
-            if (!header.Any())
+            var headers = csvReader.HeaderRecord;
+            if (!headers.Any())
                 throw new InvalidOperationException($"Did not find any headers for file {fileName}");
-
-            var csvFile = new CsvFile(header);
-            return csvFile;
+            
+            return headers;
         }
 
-        private static async Task ProcessCsvRows(IReader csvReader, CsvFile csvFile)
+        private static async Task ProcessCsvRows(IReader csvReader, CsvFile csvFile, IEnumerable<string> headers)
         {
+            var headersList = headers.ToList();
             while (await csvReader.ReadAsync())
             {
-                var row = ProcessCsvRow(csvReader, csvFile);
+                var row = ProcessCsvRow(csvReader, headersList);
                 csvFile.AddRow(row);
             }
         }
 
-        private static CsvRow ProcessCsvRow(IReaderRow csvReader, CsvFile csvFile)
+        private static CsvRow ProcessCsvRow(IReaderRow csvReader, IEnumerable<string> headers)
         {
             var csvRow = new CsvRow();
 
-            foreach (var column in csvFile.Columns)
+            foreach (var header in headers)
             {
-                if (!csvReader.TryGetField<string>(column.Index, out var fieldValue)) continue;
+                if (!csvReader.TryGetField<string>(header, out var fieldValue)) continue;
 
-                csvRow.AddField(column, fieldValue);
+                csvRow.AddOrUpdateField(header, fieldValue);
             }
 
             return csvRow;

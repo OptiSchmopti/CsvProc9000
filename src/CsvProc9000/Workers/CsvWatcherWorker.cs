@@ -24,13 +24,13 @@ namespace CsvProc9000.Workers
         public CsvWatcherWorker(
             [NotNull] ILogger<CsvWatcherWorker> logger, 
             [NotNull] IOptions<CsvProcessorOptions> processorOptions,
-            [NotNull]  IFileSystem fileSystem,
+            [NotNull] IFileSystem fileSystem,
             [NotNull] ICsvProcessor csvProcessor)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
             _csvProcessor = csvProcessor ?? throw new ArgumentNullException(nameof(csvProcessor));
-            _processorOptions = processorOptions?.Value ?? throw new ArgumentNullException(nameof(processorOptions));
+            _processorOptions = processorOptions.Value ?? throw new ArgumentNullException(nameof(processorOptions));
 
             _fileSystemWatcher = fileSystem.FileSystemWatcher.CreateNew(_processorOptions.Inbox);
 
@@ -39,7 +39,7 @@ namespace CsvProc9000.Workers
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Starting to watch for files in {Target}...", _processorOptions.Inbox);
+            _logger.LogInformation("Watcher: Starting to watch for files in {Target}...", _processorOptions.Inbox);
             _fileSystemWatcher.EnableRaisingEvents = true;
             
             return Task.CompletedTask;

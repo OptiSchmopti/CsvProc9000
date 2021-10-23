@@ -8,13 +8,14 @@ namespace CsvProc9000.Csv
     {
         private readonly List<CsvField> _fields = new();
 
-        public IReadOnlyCollection<CsvField> Fields => _fields;
+        public IEnumerable<CsvField> Fields => _fields;
 
-        public void AddField([NotNull] CsvColumn column, [NotNull] string fieldValue)
+        public void AddOrUpdateField([NotNull] string columnName, [NotNull] string fieldValue)
         {
-            if (column == null) throw new ArgumentNullException(nameof(column));
+            if (columnName == null) throw new ArgumentNullException(nameof(columnName));
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
 
+            var column = new CsvColumn(columnName);
             _fields.Add(new CsvField(column, fieldValue));
         }
     }

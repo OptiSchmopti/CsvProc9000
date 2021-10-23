@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace CsvProc9000.Csv
 {
     public class CsvFile
     {
-        private readonly List<CsvColumn> _columns = new();
         private readonly List<CsvRow> _rows = new();
 
-        public CsvFile([NotNull] IEnumerable<string> columns)
+        public CsvFile([NotNull] string fileName)
         {
-            if (columns == null) throw new ArgumentNullException(nameof(columns));
-
-            var columnsArray = columns.ToArray();
-            for (var index = 0; index < columnsArray.Length; index++)
-            {
-                _columns.Add(new CsvColumn(index, columnsArray[index]));
-            }
+            FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
         }
+        
+        public string FileName { get; }
 
-        public IReadOnlyCollection<CsvColumn> Columns => _columns;
-
-        public IReadOnlyCollection<CsvRow> Rows => _rows;
+        public IEnumerable<CsvRow> Rows => _rows;
 
         public void AddRow([NotNull] CsvRow row)
         {
