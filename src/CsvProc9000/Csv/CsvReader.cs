@@ -67,11 +67,13 @@ namespace CsvProc9000.Csv
         {
             var csvRow = new CsvRow();
 
-            foreach (var header in headers)
+            var headersList = headers.ToList();
+            for (var index = 0; index < headersList.Count; index++)
             {
-                if (!csvReader.TryGetField<string>(header, out var fieldValue)) continue;
-
-                csvRow.AddOrUpdateField(header, fieldValue);
+                if (!csvReader.TryGetField<string>(index, out var fieldValue)) continue;
+                
+                var column = new CsvColumn(index, headersList[index]);
+                csvRow.AddField(column, fieldValue);
             }
 
             return csvRow;

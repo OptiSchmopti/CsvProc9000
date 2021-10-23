@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Threading.Tasks;
 using CsvProc9000.Csv;
 using CsvProc9000.Options;
@@ -16,18 +15,24 @@ namespace CsvProc9000.Processors
         private readonly ILogger<CsvProcessor> _logger;
         private readonly IFileSystem _fileSystem;
         private readonly ICsvReader _csvReader;
+        private readonly IApplyRulesToCsvFile _applyRulesToCsvFile;
+        private readonly ISaveCsvFile _saveCsvFile;
         private readonly CsvProcessorOptions _processorOptions;
 
         public CsvProcessor(
             [NotNull] ILogger<CsvProcessor> logger,
             [NotNull] IOptions<CsvProcessorOptions> processorOptions,
             [NotNull] IFileSystem fileSystem,
-            [NotNull] ICsvReader csvReader)
+            [NotNull] ICsvReader csvReader,
+            [NotNull] IApplyRulesToCsvFile applyRulesToCsvFile,
+            [NotNull] ISaveCsvFile saveCsvFile)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processorOptions = processorOptions.Value ?? throw new ArgumentNullException(nameof(processorOptions));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
             _csvReader = csvReader ?? throw new ArgumentNullException(nameof(csvReader));
+            _applyRulesToCsvFile = applyRulesToCsvFile ?? throw new ArgumentNullException(nameof(applyRulesToCsvFile));
+            _saveCsvFile = saveCsvFile ?? throw new ArgumentNullException(nameof(saveCsvFile));
         }
 
         public async Task ProcessAsync(IFileInfo file)
@@ -66,14 +71,11 @@ namespace CsvProc9000.Processors
 
             _logger.LogDebug("Processor: Reading in file {File}...", file.FullName);
             var csvFile = await _csvReader.ReadAsync(file.FullName, _processorOptions.InboxDelimiter);
-
-            _logger.LogDebug("Processor: Applying rules to file {File}...", file.FullName);
-            ApplyRulesToFile(csvFile);
+            
+            _applyRulesToCsvFile.Apply(csvFile);
             
             await SaveResultAsync(file, csvFile);
         }
-
-        
 
         private async Task SaveResultAsync(IFileSystemInfo file, CsvFile csvFile)
         {
@@ -84,8 +86,8 @@ namespace CsvProc9000.Processors
             
             if (_fileSystem.Directory.Exists(_processorOptions.Outbox))
                 _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
-            
-            await csvFile.SaveToAsync(_fileSystem, destinationFileName, _processorOptions.OutboxDelimiter);
+
+            await _saveCsvFile.SaveToAsync(csvFile, destinationFileName, _processorOptions.OutboxDelimiter);
 
             if (!file.Exists) return;
             if (!_processorOptions.DeleteInboxFile) return;
@@ -94,83 +96,6 @@ namespace CsvProc9000.Processors
                 file.FullName, _processorOptions.Inbox);
             
             _fileSystem.File.Delete(file.FullName);
-        }
-        
-        private void ApplyRulesToFile(CsvFile csvFile)
-        {
-            if (_processorOptions.Rules == null || !_processorOptions.Rules.Any())
-            {
-                _logger.LogWarning("Processor: Cannot process file {File} because there are no rules defined",
-                    csvFile.OriginalFileName);
-                return;
-            }
-
-            foreach (var rule in _processorOptions.Rules)
-                ApplyRuleToFile(csvFile, rule);
-        }
-
-        private void ApplyRuleToFile(CsvFile csvFile, Rule rule)
-        {
-            if (rule.Conditions == null || !rule.Conditions.Any())
-            {
-                _logger.LogWarning("Processor: Skipping Rule at index {Index} because it has no conditions",
-                    _processorOptions.Rules.IndexOf(rule));
-                return;
-            }
-
-            foreach (var row in csvFile.Rows)
-                ApplyRuleToRow(row, rule, csvFile);
-        }
-
-        private void ApplyRuleToRow(CsvRow row, Rule rule, CsvFile file)
-        {
-            if (!MeetsRowConditions(row, rule, file)) return;
-
-            _logger.LogTrace("Processor: File {File} meets rule at index {RuleIndex}. Applying rule...",
-                file.OriginalFileName, _processorOptions.Rules.IndexOf(rule));
-            
-            foreach (var (columnName, fieldValue) in rule.Steps)
-            {
-                if (string.IsNullOrWhiteSpace(columnName))
-                {
-                    _logger.LogWarning("Processor: Not applying step for rule at index {RuleIndex} because no field name given",
-                        _processorOptions.Rules.IndexOf(rule));
-                    continue;
-                }
-                
-                _logger.LogTrace("Processor: Row at index {RowIndex}: Adding field '{Field}' with value '{FieldValue}'",
-                    _processorOptions.Rules.IndexOf(rule), columnName, fieldValue);
-                row.AddOrUpdateField(columnName, fieldValue);
-            }
-        }
-
-        private bool MeetsRowConditions(CsvRow row, Rule rule, CsvFile file)
-        {
-            foreach (var condition in rule.Conditions)
-            {
-                var field = row.Fields.FirstOrDefault(field => field.Name == condition.Field);
-                if (field == null)
-                {
-                    _logger.LogTrace(
-                        "Processor: Row at index {RowIndex} does not meet condition at index {ConditionIndex}, " +
-                        "because the field '{FieldName}' could not be found",
-                        file.Rows.ToList().IndexOf(row), rule.Conditions.IndexOf(condition), condition.Field);
-                    return false;
-                }
-
-                if (field.Value == condition.Value) continue;
-                
-                _logger.LogTrace(
-                    "Processor: Row at index {RowIndex} does not meet condition at index {ConditionIndex}, " + 
-                    "because the field '{FieldName}' with the value '{FieldValue}' " +
-                    "does not have the desired value '{ConditionValue}'",
-                    file.Rows.ToList().IndexOf(row), rule.Conditions.IndexOf(condition), condition.Field,
-                    field.Value, condition.Value);
-                return false;
-            }
-            
-            // if we get here, all conditions have been met
-            return true;
         }
 
         private async Task WaitUntilFileIsUnlockedAsync(IFileSystemInfo file)

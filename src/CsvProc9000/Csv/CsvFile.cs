@@ -27,48 +27,5 @@ namespace CsvProc9000.Csv
             
             _rows.Add(row);
         }
-
-        public async Task SaveToAsync(
-            IFileSystem fileSystem, 
-            string destinationFileName, 
-            string delimiter)
-        {
-            var contentStringBuilder = new StringBuilder();
-
-            var fieldNames = Rows
-                .SelectMany(row => row.Fields)
-                .Select(field => field.Name)
-                .Distinct()
-                .ToList();
-
-            // add header row
-            contentStringBuilder.AppendJoin(delimiter, fieldNames);
-            contentStringBuilder.AppendLine();
-
-            foreach (var row in Rows)
-            {
-                var firstIteration = true;
-
-                foreach (var fieldName in fieldNames)
-                {
-                    // append the delimiter to the previous field when get here not in the first iteration
-                    if (firstIteration) firstIteration = false;
-                    else contentStringBuilder.Append(delimiter);
-                    
-                    var field = row.Fields.FirstOrDefault(f => f.Name == fieldName);
-                    var fieldValue = string.Empty;
-
-                    if (field != null)
-                        fieldValue = field.Value;
-
-                    contentStringBuilder.Append(fieldValue);
-                }
-
-                contentStringBuilder.AppendLine();
-            }
-
-            var content = contentStringBuilder.ToString();
-            await fileSystem.File.WriteAllTextAsync(destinationFileName, content);
-        }
     }
 }

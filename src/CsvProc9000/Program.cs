@@ -73,6 +73,8 @@ namespace CsvProc9000
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ICsvProcessor, CsvProcessor>();
             services.AddSingleton<ICsvReader, CsvReader>();
+            services.AddSingleton<IApplyRulesToCsvFile, ApplyRulesToCsvFile>();
+            services.AddSingleton<ISaveCsvFile, SaveCsvFile>();
             
             services.AddHostedService<CsvWatcherWorker>();
         }

@@ -9,6 +9,6 @@ namespace CsvProc9000.Options
         public List<Condition> Conditions { get; set; }
 
         [UsedImplicitly]
-        public Dictionary<string, string> Steps { get; set; }
+        public List<Change> Changes { get; set; }
     }
 }
