@@ -10,13 +10,16 @@ namespace CsvProc9000.Options
         
         [UsedImplicitly]
         public string InboxDelimiter { get; set; }
+
+        [UsedImplicitly]
+        public bool DeleteInboxFile { get; set; } = true;
         
         [UsedImplicitly]
         public string Outbox { get; set; }
         
         [UsedImplicitly]
         public string OutboxDelimiter { get; set; }
-        
+
         [UsedImplicitly]
         public List<Rule> Rules { get; set; }
     }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -40,17 +40,11 @@ namespace CsvProc9000.Processors
             await ProcessInternalAsync(file);
         }
 
-        private bool CanProcess(IFileInfo file)
+        private bool CanProcess(IFileSystemInfo file)
         {
             if (!file.Exists)
             {
                 _logger.LogDebug("Cannot process file {File}, because it does not exist", file.FullName);
-                return false;
-            }
-
-            if (file.IsReadOnly)
-            {
-                _logger.LogDebug("Cannot process file {File}, because it is read-only", file.FullName);
                 return false;
             }
 
@@ -75,17 +69,39 @@ namespace CsvProc9000.Processors
 
             _logger.LogDebug("Processor: Applying rules to file {File}...", file.FullName);
             ApplyRulesToFile(csvFile);
+            
+            await SaveResultAsync(file, csvFile);
+        }
+
+        
+
+        private async Task SaveResultAsync(IFileSystemInfo file, CsvFile csvFile)
+        {
+            var fileName = file.Name;
+            var destinationFileName = _fileSystem.Path.Combine(_processorOptions.Outbox, fileName);
+            
+            _logger.LogInformation("Processor: Saving result to {Destination}...", destinationFileName);
+            
+            if (_fileSystem.Directory.Exists(_processorOptions.Outbox))
+                _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
+            
+            await csvFile.SaveToAsync(_fileSystem, destinationFileName, _processorOptions.OutboxDelimiter);
+
+            if (!file.Exists) return;
+            if (!_processorOptions.DeleteInboxFile) return;
+            
+            _logger.LogDebug("Processor: Deleting original file {File} from Inbox {Inbox}...",
+                file.FullName, _processorOptions.Inbox);
+            
+            _fileSystem.File.Delete(file.FullName);
         }
         
-        //     if (_fileSystem.Directory.Exists(_processorOptions.Outbox))
-        //         _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
-
         private void ApplyRulesToFile(CsvFile csvFile)
         {
             if (_processorOptions.Rules == null || !_processorOptions.Rules.Any())
             {
                 _logger.LogWarning("Processor: Cannot process file {File} because there are no rules defined",
-                    csvFile.FileName);
+                    csvFile.OriginalFileName);
                 return;
             }
 
@@ -111,7 +127,7 @@ namespace CsvProc9000.Processors
             if (!MeetsRowConditions(row, rule, file)) return;
 
             _logger.LogTrace("Processor: File {File} meets rule at index {RuleIndex}. Applying rule...",
-                file.FileName, _processorOptions.Rules.IndexOf(rule));
+                file.OriginalFileName, _processorOptions.Rules.IndexOf(rule));
             
             foreach (var (columnName, fieldValue) in rule.Steps)
             {
@@ -132,7 +148,7 @@ namespace CsvProc9000.Processors
         {
             foreach (var condition in rule.Conditions)
             {
-                var field = row.Fields.FirstOrDefault(field => field.FieldName == condition.Field);
+                var field = row.Fields.FirstOrDefault(field => field.Name == condition.Field);
                 if (field == null)
                 {
                     _logger.LogTrace(

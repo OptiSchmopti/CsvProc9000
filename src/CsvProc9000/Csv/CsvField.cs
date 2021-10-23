@@ -1,4 +1,4 @@
 ﻿namespace CsvProc9000.Csv
 {
-    public record CsvField(string FieldName, string Value);
+    public record CsvField(string Name, string Value);
 }
