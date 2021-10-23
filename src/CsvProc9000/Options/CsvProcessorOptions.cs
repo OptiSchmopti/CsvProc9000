@@ -8,6 +8,12 @@ namespace CsvProc9000.Options
         public string Inbox { get; set; }
         
         [UsedImplicitly]
+        public string InboxDelimiter { get; set; }
+        
+        [UsedImplicitly]
         public string Outbox { get; set; }
+        
+        [UsedImplicitly]
+        public string OutboxDelimiter { get; set; }
     }
 }

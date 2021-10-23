@@ -2,7 +2,9 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using CsvProc9000.Csv;
 using CsvProc9000.Options;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -12,16 +14,19 @@ namespace CsvProc9000.Processors
     {
         private readonly ILogger<CsvProcessor> _logger;
         private readonly IFileSystem _fileSystem;
+        private readonly ICsvReader _csvReader;
         private readonly CsvProcessorOptions _processorOptions;
 
         public CsvProcessor(
-            ILogger<CsvProcessor> logger,
-            IOptions<CsvProcessorOptions> processorOptions,
-            IFileSystem fileSystem)
+            [NotNull] ILogger<CsvProcessor> logger,
+            [NotNull] IOptions<CsvProcessorOptions> processorOptions,
+            [NotNull] IFileSystem fileSystem,
+            [NotNull] ICsvReader csvReader)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _processorOptions = processorOptions?.Value ?? throw new ArgumentNullException(nameof(processorOptions));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _csvReader = csvReader ?? throw new ArgumentNullException(nameof(csvReader));
         }
         
         public async Task ProcessAsync(IFileInfo file)
@@ -59,16 +64,12 @@ namespace CsvProc9000.Processors
             return true;
         }
 
-        private async Task ProcessInternalAsync(IFileInfo file)
+        private async Task ProcessInternalAsync(IFileSystemInfo file)
         {
             _logger.LogInformation("Processor: Starting to process {File}...", file.FullName);
 
-            // simulating work for now
-            await Task.Delay(TimeSpan.FromSeconds(1));
-
-            _logger.LogInformation("Processor: Moving file {File} to {Output}", file.FullName, _processorOptions.Outbox);
-
-            MoveFileToOutput(file);
+            _logger.LogDebug("Reading in file {File}...", file.FullName);
+            var csvFile = await _csvReader.ReadAsync(file.FullName, _processorOptions.InboxDelimiter);
         }
 
         private void MoveFileToOutput(IFileInfo file)

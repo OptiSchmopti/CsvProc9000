@@ -1,6 +1,7 @@
 using System;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using CsvProc9000.Csv;
 using CsvProc9000.Options;
 using CsvProc9000.Processors;
 using CsvProc9000.Workers;
@@ -71,6 +72,7 @@ namespace CsvProc9000
 
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ICsvProcessor, CsvProcessor>();
+            services.AddSingleton<ICsvReader, CsvReader>();
             
             services.AddHostedService<CsvWatcherWorker>();
         }
