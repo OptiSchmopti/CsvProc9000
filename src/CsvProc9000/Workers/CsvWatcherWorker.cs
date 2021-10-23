@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvProc9000.Options;
 using CsvProc9000.Processors;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,19 +13,19 @@ using Nito.AsyncEx.Synchronous;
 
 namespace CsvProc9000.Workers
 {
-    internal sealed class CsvProcessorWorker : BackgroundService
+    internal sealed class CsvWatcherWorker : BackgroundService
     {
-        private readonly ILogger<CsvProcessorWorker> _logger;
+        private readonly ILogger<CsvWatcherWorker> _logger;
         private readonly IFileSystem _fileSystem;
         private readonly ICsvProcessor _csvProcessor;
         private readonly CsvProcessorOptions _processorOptions;
         private readonly IFileSystemWatcher _fileSystemWatcher;
 
-        public CsvProcessorWorker(
-            ILogger<CsvProcessorWorker> logger, 
-            IOptions<CsvProcessorOptions> processorOptions,
-            IFileSystem fileSystem,
-            ICsvProcessor csvProcessor)
+        public CsvWatcherWorker(
+            [NotNull] ILogger<CsvWatcherWorker> logger, 
+            [NotNull] IOptions<CsvProcessorOptions> processorOptions,
+            [NotNull]  IFileSystem fileSystem,
+            [NotNull] ICsvProcessor csvProcessor)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
