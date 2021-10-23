@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -115,6 +115,13 @@ namespace CsvProc9000.Processors
             
             foreach (var (columnName, fieldValue) in rule.Steps)
             {
+                if (string.IsNullOrWhiteSpace(columnName))
+                {
+                    _logger.LogWarning("Processor: Not applying step for rule at index {RuleIndex} because no field name given",
+                        _processorOptions.Rules.IndexOf(rule));
+                    continue;
+                }
+                
                 _logger.LogTrace("Processor: Row at index {RowIndex}: Adding field '{Field}' with value '{FieldValue}'",
                     _processorOptions.Rules.IndexOf(rule), columnName, fieldValue);
                 row.AddOrUpdateField(columnName, fieldValue);
@@ -125,7 +132,7 @@ namespace CsvProc9000.Processors
         {
             foreach (var condition in rule.Conditions)
             {
-                var field = row.Fields.FirstOrDefault(field => field.Column.Name == condition.Field);
+                var field = row.Fields.FirstOrDefault(field => field.FieldName == condition.Field);
                 if (field == null)
                 {
                     _logger.LogTrace(

@@ -10,13 +10,13 @@ namespace CsvProc9000.Csv
 
         public IEnumerable<CsvField> Fields => _fields;
 
-        public void AddOrUpdateField([NotNull] string columnName, [NotNull] string fieldValue)
+        public void AddOrUpdateField([NotNull] string fieldName, [NotNull] string fieldValue)
         {
-            if (columnName == null) throw new ArgumentNullException(nameof(columnName));
+            if (string.IsNullOrWhiteSpace(fieldName))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(fieldName));
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
 
-            var column = new CsvColumn(columnName);
-            _fields.Add(new CsvField(column, fieldValue));
+            _fields.Add(new CsvField(fieldName, fieldValue));
         }
     }
 }
