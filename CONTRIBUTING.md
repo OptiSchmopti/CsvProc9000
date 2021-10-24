@@ -12,7 +12,7 @@ We want to make contributing to this project as easy and transparent as possible
 - Becoming a maintainer
 - Or everything else basically
 
-If you want to discuss on something then feel free to present your opinions, views or any other relevant comment in the [Issues](https://github.com/OptiSchmopti/CsvProc9000/issues).  
+If you want to discuss on something then feel free to present your opinions, views or any other relevant comment in the [Discussions](https://github.com/OptiSchmopti/CsvProc9000/discussions).  
 To help feel everyone at home, we have a [Code Of Conduct](CODE_OF_CONDUCT.md) that everyone has to follow in all our interactions with the project and each other.  
   
 ## Code Contribution
