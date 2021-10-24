@@ -39,6 +39,9 @@ namespace CsvProc9000.Workers
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            if (!_fileSystem.Directory.Exists(_processorOptions.Inbox))
+                _fileSystem.Directory.CreateDirectory(_processorOptions.Inbox);
+            
             _logger.LogInformation("Watcher: Starting to watch for files in {Target}...", _processorOptions.Inbox);
             _fileSystemWatcher.EnableRaisingEvents = true;
             

@@ -84,7 +84,7 @@ namespace CsvProc9000.Processors
             
             _logger.LogInformation("Processor: Saving result to {Destination}...", destinationFileName);
             
-            if (_fileSystem.Directory.Exists(_processorOptions.Outbox))
+            if (!_fileSystem.Directory.Exists(_processorOptions.Outbox))
                 _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
 
             await _saveCsvFile.SaveToAsync(csvFile, destinationFileName, _processorOptions.OutboxDelimiter);

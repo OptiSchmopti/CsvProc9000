@@ -19,7 +19,6 @@ Attached to the Release you'll find a `CsvProc9000-vX_X_X.zip` which contains:
 Before running `CreateService.bat` you should make sure that your configuration is the way you want it to be. If there are any issues with starting the service, check out the log-file that is generated in the location where the `CsvProc9000.exe` is, in the folder `logs`. Common issues are:
 
 - Forgot to configure the Inbox/Outbox folders
-- Inbox folder does not exist
 
 ## 🖱️ Update
 
