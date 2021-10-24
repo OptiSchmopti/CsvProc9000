@@ -57,4 +57,4 @@ Cool! We're always welcoming anyone that wants to contribute to this project! Ta
 
 ## 💬 Want to discuss?
 
-If you have any questions, doubts, ideas, problems or you simply want to present your opinions and views, feel free to open a [new Issue](https://github.com/OptiSchmopti/CsvProc9000/issues/new) on that topic. We'd love to hear from you!
+If you have any questions, doubts, ideas, problems or you simply want to present your opinions and views, feel free to hop into [Discussions](https://github.com/OptiSchmopti/CsvProc9000/discussions) and write about what you care about. We'd love to hear from you!
