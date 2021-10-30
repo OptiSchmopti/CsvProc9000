@@ -51,7 +51,12 @@ namespace CsvProc9000.Processors
 
         private void ApplyRuleToRow(CsvRow row, Rule rule, CsvFile file)
         {
-            if (!MeetsRowConditions(row, rule)) return;
+            if (!MeetsRowConditions(row, rule))
+            {
+                _logger.LogTrace("Processor: Row at Index {RowIndex} does not meet conditions of rule at index {RuleIndex}",
+                    file.Rows.ToList().IndexOf(row), _processorOptions.Rules.IndexOf(rule));
+                return;
+            }
 
             _logger.LogTrace("Processor: Row at index {RowIndex} meets rule at index {RuleIndex}. Applying change(s)...",
                 file.Rows.ToList().IndexOf(row), _processorOptions.Rules.IndexOf(rule));

@@ -21,6 +21,9 @@ namespace CsvProc9000.Options
         public string OutboxDelimiter { get; set; }
 
         [UsedImplicitly]
+        public bool OutboxValuesInQuotes { get; set; }
+
+        [UsedImplicitly]
         public List<Rule> Rules { get; set; }
     }
 }
