@@ -18,7 +18,10 @@ Attached to the Release you'll find a `CsvProc9000-vX_X_X.zip` which contains:
 - `CsvProc9000.exe`   - a self-contained binary containing everything that CsvProc9000 needs to run. No other software is needed
 - `CreateService.bat` - a Batch-File which will create and run a Windows-Service named "CsvProc9000" with the Mode "Automatic"
 
-Before running `CreateService.bat` you should make sure that your configuration is the way you want it to be. If there are any issues with starting the service, check out the log-file that is generated in the location where the `CsvProc9000.exe` is, in the folder `logs`. Common issues are:
+Before running `CreateService.bat` you should make sure that your configuration is the way you want it to be.  
+  
+Running the `CreateService.bat` requires you to start an admin CMD or PowerShell, navigate to where the bat is and run the bat from inside the admin CMD/PowerShell (if you select "Run as Administrator" from the Contextmenu, the path will be broken and so the bat will fail).  
+If there are any issues with starting the service, check out the log-file that is generated in the location where the `CsvProc9000.exe` is, in the folder `logs`. Common issues are:
 
 - Forgot to configure the Inbox/Outbox folders
 
