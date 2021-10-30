@@ -22,13 +22,14 @@ namespace CsvProc9000.Processors
         public async Task SaveToAsync(
             CsvFile file,
             string destinationFileName, 
-            string delimiter)
+            string delimiter,
+            bool fieldValuesWrappedInQuotes)
         {
             var contentStringBuilder = new StringBuilder();
 
             var columns = DetermineColumns(file);
-            AddHeaderRow(contentStringBuilder, delimiter, columns);
-            AddRows(contentStringBuilder, file, delimiter, columns);
+            AddHeaderRow(contentStringBuilder, delimiter, columns, fieldValuesWrappedInQuotes);
+            AddRows(contentStringBuilder, file, delimiter, columns, fieldValuesWrappedInQuotes);
 
             var content = contentStringBuilder.ToString();
             await _fileSystem.File.WriteAllTextAsync(destinationFileName, content);
@@ -48,9 +49,11 @@ namespace CsvProc9000.Processors
         private static void AddHeaderRow(
             StringBuilder contentStringBuilder, 
             string delimiter, 
-            IEnumerable<CsvColumn> columns)
+            IEnumerable<CsvColumn> columns,
+            bool fieldValuesWrappedInQuotes)
         {
-            contentStringBuilder.AppendJoin(delimiter, columns.Select(column => column.Name));
+            contentStringBuilder.AppendJoin(delimiter, columns.Select(column => 
+                fieldValuesWrappedInQuotes ? $"\"{column.Name}\"" : column.Name));
             contentStringBuilder.AppendLine();
         }
 
@@ -58,16 +61,22 @@ namespace CsvProc9000.Processors
             StringBuilder contentStringBuilder, 
             CsvFile file, 
             string delimiter, 
-            List<CsvColumn> columns)
+            List<CsvColumn> columns,
+            bool fieldValuesWrappedInQuotes)
         {
             foreach (var row in file.Rows)
             {
-                AddRow(contentStringBuilder, delimiter, columns, row);
+                AddRow(contentStringBuilder, delimiter, columns, row, fieldValuesWrappedInQuotes);
                 contentStringBuilder.AppendLine();
             }
         }
 
-        private static void AddRow(StringBuilder contentStringBuilder, string delimiter, List<CsvColumn> columns, CsvRow row)
+        private static void AddRow(
+            StringBuilder contentStringBuilder, 
+            string delimiter, 
+            List<CsvColumn> columns, 
+            CsvRow row,
+            bool fieldValuesWrappedInQuotes)
         {
             var firstIteration = true;
 
@@ -77,17 +86,21 @@ namespace CsvProc9000.Processors
                 if (firstIteration) firstIteration = false;
                 else contentStringBuilder.Append(delimiter);
 
-                AddField(contentStringBuilder, row, column);
+                AddField(contentStringBuilder, row, column, fieldValuesWrappedInQuotes);
             }
         }
 
-        private static void AddField(StringBuilder contentStringBuilder, CsvRow row, CsvColumn column)
+        private static void AddField(
+            StringBuilder contentStringBuilder, 
+            CsvRow row, 
+            CsvColumn column,
+            bool fieldValuesWrappedInQuotes)
         {
             var field = row.Fields.FirstOrDefault(f => f.Column == column);
             var fieldValue = string.Empty;
 
             if (field != null)
-                fieldValue = field.Value;
+                fieldValue = fieldValuesWrappedInQuotes ? $"\"{field.Value}\"" : field.Value;
 
             contentStringBuilder.Append(fieldValue);
         }

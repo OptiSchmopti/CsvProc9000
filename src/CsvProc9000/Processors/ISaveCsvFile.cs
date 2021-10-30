@@ -8,6 +8,7 @@ namespace CsvProc9000.Processors
         Task SaveToAsync(
             CsvFile file, 
             string destinationFileName, 
-            string delimiter);
+            string delimiter,
+            bool fieldValuesWrappedInQuotes);
     }
 }

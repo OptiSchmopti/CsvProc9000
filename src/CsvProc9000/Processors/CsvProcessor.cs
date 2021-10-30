@@ -87,7 +87,11 @@ namespace CsvProc9000.Processors
             if (!_fileSystem.Directory.Exists(_processorOptions.Outbox))
                 _fileSystem.Directory.CreateDirectory(_processorOptions.Outbox);
 
-            await _saveCsvFile.SaveToAsync(csvFile, destinationFileName, _processorOptions.OutboxDelimiter);
+            await _saveCsvFile.SaveToAsync(
+                csvFile, 
+                destinationFileName, 
+                _processorOptions.OutboxDelimiter, 
+                _processorOptions.OutboxValuesInQuotes);
 
             if (!file.Exists) return;
             if (!_processorOptions.DeleteInboxFile) return;
