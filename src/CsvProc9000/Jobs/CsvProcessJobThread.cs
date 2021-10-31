@@ -35,10 +35,10 @@ namespace CsvProc9000.Jobs
         private async Task ProcessThread(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
-                await ProcessAsync(stoppingToken);
+                await ProcessAsync();
         }
 
-        private async Task ProcessAsync(CancellationToken stoppingToken)
+        private async Task ProcessAsync()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CsvProc9000.Jobs
             }
             finally
             {
-                await Task.Delay(300, stoppingToken);
+                await Task.Delay(300);
             }
         }
 
