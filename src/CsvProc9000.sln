@@ -12,6 +12,8 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvProc9000.Model", "CsvProc9000.Model\CsvProc9000.Model.csproj", "{696D5DBE-40FF-4ACA-A3A0-241AF7F451CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvProc9000.Tests", "CsvProc9000.Tests\CsvProc9000.Tests.csproj", "{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,5 +51,19 @@ Global
 		{696D5DBE-40FF-4ACA-A3A0-241AF7F451CA}.Release|x64.Build.0 = Release|Any CPU
 		{696D5DBE-40FF-4ACA-A3A0-241AF7F451CA}.Release|x86.ActiveCfg = Release|Any CPU
 		{696D5DBE-40FF-4ACA-A3A0-241AF7F451CA}.Release|x86.Build.0 = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|x64.Build.0 = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Debug|x86.Build.0 = Debug|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|x64.ActiveCfg = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|x64.Build.0 = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|x86.ActiveCfg = Release|Any CPU
+		{B24D16F8-3DB4-4D89-92F6-16637EBCE3E6}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

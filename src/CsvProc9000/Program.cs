@@ -10,12 +10,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using ILogger = Serilog.ILogger;
 
 namespace CsvProc9000
 {
+    [ExcludeFromCodeCoverage] // startup stuff
     public static class Program
     {
         public static async Task Main(string[] args)

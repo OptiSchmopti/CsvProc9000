@@ -65,7 +65,7 @@ namespace CsvProc9000.BackgroundServices
 
         private void OnFileCreated(object sender, FileSystemEventArgs eventArgs)
         {
-            if (eventArgs.ChangeType != WatcherChangeTypes.Created) return;
+            if (!eventArgs.ChangeType.HasFlag(WatcherChangeTypes.Created)) return;
 
             _logger.LogDebug("FileWatcher: File Created: {File}", eventArgs.FullPath);
 
