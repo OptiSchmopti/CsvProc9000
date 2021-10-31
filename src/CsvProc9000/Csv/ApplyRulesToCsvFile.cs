@@ -1,12 +1,14 @@
-﻿using System;
-using System.Linq;
-using CsvProc9000.Csv;
+﻿using CsvProc9000.Csv.Contracts;
+using CsvProc9000.Model.Configuration;
+using CsvProc9000.Model.Csv;
 using CsvProc9000.Options;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
 
-namespace CsvProc9000.Processors
+namespace CsvProc9000.Csv
 {
     public class ApplyRulesToCsvFile : IApplyRulesToCsvFile
     {
@@ -21,72 +23,98 @@ namespace CsvProc9000.Processors
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Apply(CsvFile csvFile)
+        public void Apply(
+            CsvFile csvFile,
+            Guid jobId,
+            Guid jobThreadId)
         {
-            _logger.LogDebug("Processor: Applying rules to file {File}...", csvFile.OriginalFileName);
-            
+            _logger.LogDebug("T-{ThreadId} J-{JobId}# Applying rules to file {File}...",
+                jobThreadId, jobId, csvFile.OriginalFileName);
+
             if (_processorOptions.Rules == null || !_processorOptions.Rules.Any())
             {
-                _logger.LogWarning("Processor: Cannot process file {File} because there are no rules defined",
-                    csvFile.OriginalFileName);
+                _logger.LogWarning(
+                    "T-{ThreadId} J-{JobId}# Cannot process file {File} because there are no rules defined!",
+                    jobThreadId, jobId, csvFile.OriginalFileName);
                 return;
             }
 
             foreach (var rule in _processorOptions.Rules)
-                ApplyRuleToFile(csvFile, rule);
+                ApplyRuleToFile(csvFile, rule, jobId, jobThreadId);
         }
 
-        private void ApplyRuleToFile(CsvFile csvFile, Rule rule)
+        private void ApplyRuleToFile(
+            CsvFile csvFile,
+            Rule rule,
+            Guid jobId,
+            Guid jobThreadId)
         {
             if (rule.Conditions == null || !rule.Conditions.Any())
             {
-                _logger.LogWarning("Processor: Skipping Rule at index {Index} because it has no conditions",
-                    _processorOptions.Rules.IndexOf(rule));
+                _logger.LogWarning(
+                    "T-{ThreadId} J-{JobId}# Skipping Rule at index {Index} because it has no conditions!",
+                    jobThreadId, jobId, IndexOfRule(rule));
+
                 return;
             }
 
             foreach (var row in csvFile.Rows)
-                ApplyRuleToRow(row, rule, csvFile);
+                ApplyRuleToRow(row, rule, csvFile, jobId, jobThreadId);
         }
 
-        private void ApplyRuleToRow(CsvRow row, Rule rule, CsvFile file)
+        private void ApplyRuleToRow(
+            CsvRow row,
+            Rule rule,
+            CsvFile file,
+            Guid jobId,
+            Guid jobThreadId)
         {
             if (!MeetsRowConditions(row, rule))
             {
-                _logger.LogTrace("Processor: Row at Index {RowIndex} does not meet conditions of rule at index {RuleIndex}",
-                    file.Rows.ToList().IndexOf(row), _processorOptions.Rules.IndexOf(rule));
-                return;
-            }
-
-            _logger.LogTrace("Processor: Row at index {RowIndex} meets rule at index {RuleIndex}. Applying change(s)...",
-                file.Rows.ToList().IndexOf(row), _processorOptions.Rules.IndexOf(rule));
-
-            foreach (var change in rule.Changes)
-                try
-                {
-                    ApplyChangeToRow(row, rule, file, change);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e,
-                        "Processor: Error occured while applying change at index {ChangeIndex} to row at index {RowIndex}",
-                        rule.Changes.IndexOf(change), file.Rows.ToList().IndexOf(row));
-                }
-        }
-
-        private void ApplyChangeToRow(CsvRow row, Rule rule, CsvFile file, Change change)
-        {
-            if (string.IsNullOrWhiteSpace(change.Field))
-            {
-                _logger.LogWarning(
-                    "Processor: Not applying change at index {ChangeIndex} for rule at index {RuleIndex} because no field name given",
-                    rule.Changes.IndexOf(change), _processorOptions.Rules.IndexOf(rule));
+                _logger.LogTrace(
+                    "T-{ThreadId} J-{JobId}# Row at Index {RowIndex} does not meet conditions of rule at index {RuleIndex}",
+                    jobThreadId, jobId, IndexOfRow(row, file), IndexOfRule(rule));
                 return;
             }
 
             _logger.LogTrace(
-                "Processor: Row at index {RowIndex}: Applying change at index {ChangeIndex}: Field={Field}, Value={Value}, Mode={Mode}, Index={Index}",
-                file.Rows.ToList().IndexOf(row), rule.Changes.IndexOf(change), change.Field, change.Value, change.Mode, change.FieldIndex);
+                "T-{ThreadId} J-{JobId}# Row at index {RowIndex} meets rule at index {RuleIndex}. Applying change(s)...",
+                jobThreadId, jobId, IndexOfRow(row, file), IndexOfRule(rule));
+
+            foreach (var change in rule.Changes)
+                try
+                {
+                    ApplyChangeToRow(row, rule, file, change, jobId, jobThreadId);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e,
+                        "T-{ThreadId} J-{JobId}# Error occured while applying change at index {ChangeIndex} to row at index {RowIndex}",
+                        jobThreadId, jobId, IndexOfChange(rule, change), IndexOfRow(row, file));
+                }
+        }
+
+        private void ApplyChangeToRow(
+            CsvRow row,
+            Rule rule,
+            CsvFile file,
+            Change change,
+            Guid jobId,
+            Guid jobThreadId)
+        {
+            if (string.IsNullOrWhiteSpace(change.Field))
+            {
+                _logger.LogWarning(
+                    "T-{ThreadId} J-{JobId}# Not applying change at index {ChangeIndex} for rule at index {RuleIndex} because no field name given",
+                    jobThreadId, jobId, IndexOfChange(rule, change), IndexOfRule(rule));
+
+                return;
+            }
+
+            _logger.LogTrace(
+                "T-{ThreadId} J-{JobId}# Row at index {RowIndex}: Applying change at index {ChangeIndex}: Field={Field}, Value={Value}, Mode={Mode}, Index={Index}",
+                jobThreadId, jobId, IndexOfRow(row, file), IndexOfChange(rule, change), change.Field,
+                change.Value, change.Mode, change.FieldIndex);
 
             switch (change.Mode)
             {
@@ -145,6 +173,21 @@ namespace CsvProc9000.Processors
             }
 
             return meetsConditions;
+        }
+
+        private int IndexOfRule(Rule rule)
+        {
+            return _processorOptions.Rules.IndexOf(rule);
+        }
+
+        private static int IndexOfRow(CsvRow row, CsvFile file)
+        {
+            return file.Rows.ToList().IndexOf(row);
+        }
+
+        private static int IndexOfChange(Rule rule, Change change)
+        {
+            return rule.Changes.IndexOf(change);
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 
-namespace CsvProc9000.Csv
+namespace CsvProc9000.Model.Csv
 {
     public class CsvFile
     {
@@ -16,7 +12,7 @@ namespace CsvProc9000.Csv
         {
             OriginalFileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
         }
-        
+
         public string OriginalFileName { get; }
 
         public IEnumerable<CsvRow> Rows => _rows;
@@ -24,7 +20,7 @@ namespace CsvProc9000.Csv
         public void AddRow([NotNull] CsvRow row)
         {
             if (row == null) throw new ArgumentNullException(nameof(row));
-            
+
             _rows.Add(row);
         }
     }

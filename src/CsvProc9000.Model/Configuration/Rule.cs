@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 
-namespace CsvProc9000.Options
+namespace CsvProc9000.Model.Configuration
 {
     public class Rule
     {

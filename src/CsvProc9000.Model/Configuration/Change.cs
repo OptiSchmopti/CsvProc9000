@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace CsvProc9000.Options
+namespace CsvProc9000.Model.Configuration
 {
     public class Change
     {
@@ -15,7 +15,7 @@ namespace CsvProc9000.Options
 
         [UsedImplicitly]
         public ChangeMode Mode { get; set; } = ChangeMode.AddOrUpdate;
-        
+
         [UsedImplicitly]
         public string Value { get; set; }
     }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using System.Linq;
 
-namespace CsvProc9000.Csv
+namespace CsvProc9000.Model.Csv
 {
     public class CsvRow
     {
@@ -15,7 +15,7 @@ namespace CsvProc9000.Csv
         {
             if (column == null) throw new ArgumentNullException(nameof(column));
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
-            
+
             _fields.Add(new CsvField(column, fieldValue));
         }
 
@@ -27,7 +27,7 @@ namespace CsvProc9000.Csv
 
             var nextIndexForColumn = Fields.Count() + 1;
             var column = new CsvColumn(nextIndexForColumn, fieldName);
-            
+
             AddField(column, fieldValue);
         }
 
@@ -45,7 +45,7 @@ namespace CsvProc9000.Csv
 
             var index = _fields.IndexOf(fieldToChange);
             _fields.Remove(fieldToChange);
-            
+
             var changedField = fieldToChange with { Value = fieldValue };
             _fields.Insert(index, changedField);
         }

@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace CsvProc9000.Options
+namespace CsvProc9000.Model.Configuration
 {
     public class Condition
     {

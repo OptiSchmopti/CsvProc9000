@@ -1,15 +1,17 @@
-using System;
-using System.IO.Abstractions;
-using System.Threading.Tasks;
+using CsvProc9000.BackgroundServices;
 using CsvProc9000.Csv;
+using CsvProc9000.Csv.Contracts;
+using CsvProc9000.Jobs;
+using CsvProc9000.Jobs.Contracts;
 using CsvProc9000.Options;
-using CsvProc9000.Processors;
-using CsvProc9000.Workers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.IO.Abstractions;
+using System.Threading.Tasks;
 using ILogger = Serilog.ILogger;
 
 namespace CsvProc9000
@@ -41,7 +43,7 @@ namespace CsvProc9000
                 .ConfigureLogging((context, builder) =>
                 {
                     builder.ClearProviders();
-                    
+
                     var logger = ConfigureSerilogLogging(context.Configuration);
                     builder.AddSerilog(logger);
 
@@ -71,12 +73,20 @@ namespace CsvProc9000
             services.Configure<CsvProcessorOptions>(processorOptionsSection);
 
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<ICsvProcessor, CsvProcessor>();
-            services.AddSingleton<ICsvReader, CsvReader>();
+
             services.AddSingleton<IApplyRulesToCsvFile, ApplyRulesToCsvFile>();
-            services.AddSingleton<ISaveCsvFile, SaveCsvFile>();
-            
-            services.AddHostedService<CsvWatcherWorker>();
+            services.AddSingleton<ICsvExporter, CsvExporter>();
+            services.AddSingleton<ICsvImporter, CsvImporter>();
+
+            services.AddSingleton<IJobPool, JobPool>();
+            services.AddTransient<ICsvProcessJobThread, CsvProcessJobThread>();
+            services.AddTransient<ICsvProcessJobWorker, CsvProcessJobWorker>();
+
+            services.AddSingleton<ICsvProcessJobThreadFactory, CsvProcessJobThreadFactory>();
+
+            services.AddHostedService<CsvFileWatcherBackgroundService>();
+            services.AddHostedService<CsvExistingFileWatcherBackgroundService>();
+            services.AddHostedService<CsvProcessJobThreadSpawnerBackgroundService>();
         }
     }
 }
