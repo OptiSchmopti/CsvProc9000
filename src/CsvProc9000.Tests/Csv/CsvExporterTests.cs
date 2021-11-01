@@ -34,8 +34,12 @@ namespace CsvProc9000.Tests.Csv
             var sut = context.Build();
 
             await Assert.ThrowsAnyAsync<ArgumentNullException>(() => sut.ExportAsync(null!, "something", ","));
+            
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), null!, ","));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), string.Empty, ","));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), " ", ","));
+            
+            
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", null!));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", string.Empty));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", " "));
