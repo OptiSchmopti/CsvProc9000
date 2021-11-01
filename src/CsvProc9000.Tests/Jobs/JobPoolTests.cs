@@ -41,7 +41,7 @@ namespace CsvProc9000.Tests.Jobs
             var sut = context.Build();
 
             var job = new CsvProcessJob(Mock.Of<IFileInfo>());
-            
+
             sut.Add(job);
 
             var result = sut.TryGet<CsvProcessJob>(out var foundJob);
@@ -62,10 +62,10 @@ namespace CsvProc9000.Tests.Jobs
 
             var job1 = new CsvProcessJob(Mock.Of<IFileInfo>());
             var job2 = new CsvProcessJob(Mock.Of<IFileInfo>());
-            
+
             sut.Add(job1);
             sut.Add(job2);
-            
+
             sut.TryGet<CsvProcessJob>(out var foundJob);
 
             foundJob

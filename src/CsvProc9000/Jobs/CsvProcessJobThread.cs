@@ -33,7 +33,7 @@ namespace CsvProc9000.Jobs
 
             _processThreadTask = Task.Run(() => ProcessThread(stoppingToken), CancellationToken.None);
         }
-        
+
         [ExcludeFromCodeCoverage] // no need to test this
         public void Dispose()
         {

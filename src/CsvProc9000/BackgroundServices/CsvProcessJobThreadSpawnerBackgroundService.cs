@@ -13,9 +13,9 @@ namespace CsvProc9000.BackgroundServices
     internal sealed class CsvProcessJobThreadSpawnerBackgroundService : BackgroundService
     {
         private readonly CsvProcessorOptions _csvProcessorOptions;
-        private readonly ICsvProcessJobThreadFactory _jobThreadFactory;
 
-        private readonly List<IDisposable> _disposables = new ();
+        private readonly List<IDisposable> _disposables = new();
+        private readonly ICsvProcessJobThreadFactory _jobThreadFactory;
 
         public CsvProcessJobThreadSpawnerBackgroundService(
             [NotNull] IOptions<CsvProcessorOptions> csvProcessorOptions,

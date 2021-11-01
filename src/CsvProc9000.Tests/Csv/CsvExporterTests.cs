@@ -34,15 +34,19 @@ namespace CsvProc9000.Tests.Csv
             var sut = context.Build();
 
             await Assert.ThrowsAnyAsync<ArgumentNullException>(() => sut.ExportAsync(null!, "something", ","));
-            
+
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), null!, ","));
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), string.Empty, ","));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), string.Empty, ","));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), " ", ","));
-            
-            
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", null!));
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", string.Empty));
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), "something", " "));
+
+
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", null!));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", string.Empty));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", " "));
         }
 
         [Fact]
@@ -68,7 +72,7 @@ namespace CsvProc9000.Tests.Csv
 
             var file = new CsvFile("something");
             await sut.ExportAsync(file, "some file", ",");
-            
+
             directoryInfo.Verify(di => di.Create(), Times.Once);
         }
 
@@ -84,25 +88,25 @@ namespace CsvProc9000.Tests.Csv
 
             var row1 = new CsvRow();
             var row2 = new CsvRow();
-            
+
             row1.AddField(column1, "field11");
             row1.AddField(column2, "field12");
-            
+
             row2.AddField(column1, "field21");
             row2.AddField(column2, "field22");
-            
+
             file.AddRow(row1);
             file.AddRow(row2);
-            
+
             await sut.ExportAsync(file, "something", ",");
-            
+
             // 3 = 1 header, 2 rows
             writer.Verify(w => w.NextRecordAsync(), Times.Exactly(3));
 
             var valuesThatShouldHaveBeenWritten = new List<string> { column1.Name, column2.Name };
             valuesThatShouldHaveBeenWritten.AddRange(row1.Fields.Select(f => f.Value));
             valuesThatShouldHaveBeenWritten.AddRange(row2.Fields.Select(f => f.Value));
-            
+
             foreach (var valueThatShouldHaveBeenWritten in valuesThatShouldHaveBeenWritten)
                 writer.Verify(w => w.WriteField(valueThatShouldHaveBeenWritten, It.IsAny<bool>()), Times.Once);
 
@@ -118,7 +122,7 @@ namespace CsvProc9000.Tests.Csv
                 .For<ICsvWriterFactory>()
                 .Setup(wf => wf.Create(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(writer.Object);
-            
+
             var directoryInfo = new Mock<IDirectoryInfo>();
             directoryInfo
                 .SetupGet(di => di.Exists)

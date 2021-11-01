@@ -14,10 +14,10 @@ namespace CsvProc9000.Jobs
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
-        
+
         public ICsvProcessJobThread Create()
         {
-            var thread = (ICsvProcessJobThread) _serviceProvider.GetService(typeof(ICsvProcessJobThread));
+            var thread = (ICsvProcessJobThread)_serviceProvider.GetService(typeof(ICsvProcessJobThread));
             return thread;
         }
     }

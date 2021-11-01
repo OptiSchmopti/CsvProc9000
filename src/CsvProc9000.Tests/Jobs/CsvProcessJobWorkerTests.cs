@@ -81,7 +81,7 @@ namespace CsvProc9000.Tests.Jobs
             var sut = context.Build();
 
             options.DeleteInboxFile = shouldDeleteFile;
-            
+
             var file = new Mock<IFileInfo>();
             file
                 .SetupGet(f => f.Exists)
@@ -119,8 +119,8 @@ namespace CsvProc9000.Tests.Jobs
                 .Verify(
                     exporter => exporter.ExportAsync(It.IsAny<CsvFile>(), It.IsAny<string>(), It.IsAny<string>(),
                         It.IsAny<bool>()), Times.Once);
-            
-            
+
+
             if (shouldDeleteFile)
                 file.Verify(f => f.Delete(), Times.Once);
             else
@@ -132,7 +132,7 @@ namespace CsvProc9000.Tests.Jobs
         {
             var (context, _) = CreateContext();
             var sut = context.Build();
-            
+
             var file = new Mock<IFileInfo>();
             file
                 .SetupGet(f => f.Exists)
@@ -166,7 +166,7 @@ namespace CsvProc9000.Tests.Jobs
                 .Returns(true);
 
             await sut.WorkOnAsync(Guid.NewGuid(), job);
-            
+
             context
                 .For<IFileSystem>()
                 .Verify(fileSystem => fileSystem.File.Delete(It.IsAny<string>()), Times.Once);

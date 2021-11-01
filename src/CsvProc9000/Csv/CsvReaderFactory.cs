@@ -13,7 +13,7 @@ namespace CsvProc9000.Csv
     internal sealed class CsvReaderFactory : ICsvReaderFactory
     {
         private readonly IFileSystem _fileSystem;
-        
+
         public CsvReaderFactory(
             [JetBrains.Annotations.NotNull] IFileSystem fileSystem)
         {
@@ -29,7 +29,7 @@ namespace CsvProc9000.Csv
              */
             var fileStream = _fileSystem.FileStream.Create(file, FileMode.Open, FileAccess.Read, FileShare.None);
             var streamReader = new StreamReader(fileStream);
-            
+
             var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 Delimiter = delimiter, HasHeaderRecord = true

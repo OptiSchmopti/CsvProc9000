@@ -57,7 +57,7 @@ namespace CsvProc9000.Csv
         }
 
         private static async Task WriteHeadersAsync(
-            IEnumerable<CsvColumn> columns, 
+            IEnumerable<CsvColumn> columns,
             IWriter writer,
             bool wrapValuesInQuotes)
         {
@@ -69,8 +69,8 @@ namespace CsvProc9000.Csv
         }
 
         private static async Task WriteRowsAsync(
-            CsvFile file, 
-            List<CsvColumn> columns, 
+            CsvFile file,
+            List<CsvColumn> columns,
             IWriter writer,
             bool wrapValuesInQuotes)
         {
@@ -83,8 +83,8 @@ namespace CsvProc9000.Csv
         }
 
         private static void WriteRow(
-            List<CsvColumn> columns, 
-            IWriterRow writer, 
+            List<CsvColumn> columns,
+            IWriterRow writer,
             CsvRow row,
             bool wrapValuesInQuotes)
         {

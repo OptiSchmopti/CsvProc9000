@@ -61,7 +61,7 @@ namespace CsvProc9000.Tests.BackgroundServices
                     jobThreads.Add(jobThreadMock);
                     return jobThreadMock.Object;
                 });
-            
+
             options.JobThreadCount = jobThreadCount;
 
             await sut.StartAsync(CancellationToken.None);
@@ -72,7 +72,7 @@ namespace CsvProc9000.Tests.BackgroundServices
 
             foreach (var jobThread in jobThreads)
                 jobThread
-                    .Verify(thread => 
+                    .Verify(thread =>
                         thread.Start(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -91,13 +91,13 @@ namespace CsvProc9000.Tests.BackgroundServices
             options.JobThreadCount = 1;
 
             await sut.StartAsync(CancellationToken.None);
-            
+
             sut.Dispose();
-            
+
             jobThread.Verify(thread => thread.Dispose(), Times.Once);
         }
-        
-        private static (ArrangeContext<CsvProcessJobThreadSpawnerBackgroundService>, CsvProcessorOptions) 
+
+        private static (ArrangeContext<CsvProcessJobThreadSpawnerBackgroundService>, CsvProcessorOptions)
             CreateContext()
         {
             var options = new CsvProcessorOptions();

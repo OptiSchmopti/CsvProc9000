@@ -42,13 +42,13 @@ namespace CsvProc9000.Tests.Jobs
                 .For<IJobPool>()
                 .Setup(pool => pool.TryGet(out job))
                 .Returns(false);
-            
+
             var tokenSource = new CancellationTokenSource();
-            
+
             sut.Start(tokenSource.Token);
 
             tokenSource.Cancel();
-            
+
             context
                 .For<IJobPool>()
                 .Verify(pool => pool.TryGet(out job), Times.AtMost(5));
@@ -59,22 +59,22 @@ namespace CsvProc9000.Tests.Jobs
         {
             var context = new ArrangeContext<CsvProcessJobThread>();
             var sut = context.Build();
-            
+
             var job = new CsvProcessJob(Mock.Of<IFileInfo>());
             context
                 .For<IJobPool>()
                 .Setup(pool => pool.TryGet(out job))
                 .Returns(true);
-            
+
             var tokenSource = new CancellationTokenSource();
-            
+
             sut.Start(tokenSource.Token);
 
             // yeah well this is timely process unfortunately ...
             await Task.Delay(500, tokenSource.Token);
 
             tokenSource.Cancel();
-            
+
             context
                 .For<ICsvProcessJobWorker>()
                 .Verify(worker => worker.WorkOnAsync(It.IsAny<Guid>(), job));

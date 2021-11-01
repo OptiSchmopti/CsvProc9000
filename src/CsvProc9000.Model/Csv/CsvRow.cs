@@ -13,7 +13,8 @@ namespace CsvProc9000.Model.Csv
 
         public IEnumerable<CsvField> Fields => _fields;
 
-        public void AddField([JetBrains.Annotations.NotNull] CsvColumn column, [JetBrains.Annotations.NotNull] string fieldValue)
+        public void AddField([JetBrains.Annotations.NotNull] CsvColumn column,
+            [JetBrains.Annotations.NotNull] string fieldValue)
         {
             if (column == null) throw new ArgumentNullException(nameof(column));
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
@@ -21,7 +22,8 @@ namespace CsvProc9000.Model.Csv
             _fields.Add(new CsvField(column, fieldValue));
         }
 
-        public void AddField([JetBrains.Annotations.NotNull] string fieldName, [JetBrains.Annotations.NotNull] string fieldValue)
+        public void AddField([JetBrains.Annotations.NotNull] string fieldName,
+            [JetBrains.Annotations.NotNull] string fieldValue)
         {
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
             if (string.IsNullOrWhiteSpace(fieldName))
@@ -33,7 +35,8 @@ namespace CsvProc9000.Model.Csv
             AddField(column, fieldValue);
         }
 
-        public void AddOrUpdateField([JetBrains.Annotations.NotNull] string fieldName, [JetBrains.Annotations.NotNull] string fieldValue, int? fieldIndex)
+        public void AddOrUpdateField([JetBrains.Annotations.NotNull] string fieldName,
+            [JetBrains.Annotations.NotNull] string fieldValue, int? fieldIndex)
         {
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
             if (string.IsNullOrWhiteSpace(fieldName))

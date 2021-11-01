@@ -23,7 +23,7 @@ namespace CsvProc9000.Tests.Csv
                 .Should()
                 .BeAssignableTo<ICsvImporter>();
         }
-        
+
         [Fact]
         public async Task Import_Does_Not_Accept_Invalid_Parameters()
         {
@@ -33,7 +33,7 @@ namespace CsvProc9000.Tests.Csv
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync(null!, ","));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync(string.Empty, ","));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync(" ", ","));
-            
+
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync("something", null!));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync("something", string.Empty));
             await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ImportAsync("something", " "));
@@ -57,7 +57,7 @@ namespace CsvProc9000.Tests.Csv
             reader
                 .SetupGet(r => r.HeaderRecord)
                 .Returns(Array.Empty<string>());
-            
+
             await Assert.ThrowsAnyAsync<InvalidOperationException>(() => sut.ImportAsync("f", ","));
         }
 
@@ -87,7 +87,7 @@ namespace CsvProc9000.Tests.Csv
             reader
                 .Setup(r => r.TryGetField(0, out expectedValueField1))
                 .Returns(true);
-            
+
             var expectedValueField2 = "f2";
             reader
                 .Setup(r => r.TryGetField(1, out expectedValueField2))
@@ -129,7 +129,7 @@ namespace CsvProc9000.Tests.Csv
                 .Value
                 .Should()
                 .Be(expectedValueField1);
-            
+
             file
                 .Rows
                 .ElementAt(0)
@@ -149,7 +149,7 @@ namespace CsvProc9000.Tests.Csv
                 .Should()
                 .Be(expectedValueField2);
         }
-        
+
         private static (ArrangeContext<CsvImporter>, Mock<IReader>) CreateContext()
         {
             var context = new ArrangeContext<CsvImporter>();

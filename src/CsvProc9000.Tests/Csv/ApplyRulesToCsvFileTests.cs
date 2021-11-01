@@ -41,11 +41,11 @@ namespace CsvProc9000.Tests.Csv
         {
             var (context, options) = CreateContext();
             var sut = context.Build();
-            
+
             options.Rules = null;
 
             var file = new CsvFile("some file");
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             file
@@ -54,7 +54,7 @@ namespace CsvProc9000.Tests.Csv
                 .BeEmpty();
 
             options.Rules = new List<Rule>();
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             file
@@ -70,18 +70,18 @@ namespace CsvProc9000.Tests.Csv
             var sut = context.Build();
 
             options.Rules = new List<Rule> { new() { Conditions = null } };
-            
+
             var file = new CsvFile("some file");
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             file
                 .Rows
                 .Should()
                 .BeEmpty();
-            
+
             options.Rules = new List<Rule> { new() { Conditions = new List<Condition>() } };
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             file
@@ -101,7 +101,13 @@ namespace CsvProc9000.Tests.Csv
 
             options.Rules = new List<Rule>
             {
-                new() { Conditions = new List<Condition>{ new() { Field = targetField, Value = targetFieldValueCondition } } }
+                new()
+                {
+                    Conditions = new List<Condition>
+                    {
+                        new() { Field = targetField, Value = targetFieldValueCondition }
+                    }
+                }
             };
 
             // none of this matches the condition above!
@@ -112,7 +118,7 @@ namespace CsvProc9000.Tests.Csv
             file.AddRow(row);
             var field = row.Fields.FirstOrDefault();
             Assert.NotNull(field);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             field
@@ -135,10 +141,18 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = string.Empty, Value = targetFieldChangeValue } } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new() { Field = string.Empty, Value = targetFieldChangeValue }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column = new CsvColumn(0, targetField);
@@ -146,7 +160,7 @@ namespace CsvProc9000.Tests.Csv
             file.AddRow(row);
             var field = row.Fields.FirstOrDefault();
             Assert.NotNull(field);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             field
@@ -169,10 +183,18 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = targetField, Value = targetFieldChangeValue, Mode = ChangeMode.Add} } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new() { Field = targetField, Value = targetFieldChangeValue, Mode = ChangeMode.Add }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column = new CsvColumn(0, targetField);
@@ -180,7 +202,7 @@ namespace CsvProc9000.Tests.Csv
             file.AddRow(row);
             var field = row.Fields.FirstOrDefault();
             Assert.NotNull(field);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             row
@@ -222,10 +244,23 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = targetField, Value = targetFieldChangeValue, Mode = ChangeMode.AddOrUpdate} } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new()
+                        {
+                            Field = targetField,
+                            Value = targetFieldChangeValue,
+                            Mode = ChangeMode.AddOrUpdate
+                        }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column = new CsvColumn(0, targetField);
@@ -241,13 +276,13 @@ namespace CsvProc9000.Tests.Csv
 
             var updatedField = row.Fields.FirstOrDefault();
             Assert.NotNull(updatedField);
-            
+
             updatedField
                 .Value
                 .Should()
                 .Be(targetFieldChangeValue);
         }
-        
+
         [Fact]
         public void Apply_Does_Add_Field_With_Mode_AddOrUpdate()
         {
@@ -263,10 +298,23 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = targetAddField, Value = targetFieldChangeValue, Mode = ChangeMode.AddOrUpdate} } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new()
+                        {
+                            Field = targetAddField,
+                            Value = targetFieldChangeValue,
+                            Mode = ChangeMode.AddOrUpdate
+                        }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column = new CsvColumn(0, targetField);
@@ -274,7 +322,7 @@ namespace CsvProc9000.Tests.Csv
             file.AddRow(row);
             var field = row.Fields.FirstOrDefault();
             Assert.NotNull(field);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             row
@@ -301,7 +349,7 @@ namespace CsvProc9000.Tests.Csv
                 .Should()
                 .Be(targetFieldChangeValue);
         }
-        
+
         [Fact]
         public void Apply_Fails_To_Update_When_Same_Field_With_Mode_AddOrUpdate()
         {
@@ -316,10 +364,23 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = targetField, Value = targetFieldChangeValue, Mode = ChangeMode.AddOrUpdate} } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new()
+                        {
+                            Field = targetField,
+                            Value = targetFieldChangeValue,
+                            Mode = ChangeMode.AddOrUpdate
+                        }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column1 = new CsvColumn(0, targetField);
@@ -327,12 +388,12 @@ namespace CsvProc9000.Tests.Csv
             row.AddField(column1, targetFieldValueCondition);
             row.AddField(column2, "some value");
             file.AddRow(row);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             var firstField = row.Fields.FirstOrDefault(field => field.Column.Index == 0);
             var secondField = row.Fields.FirstOrDefault(field => field.Column.Index == 1);
-            
+
             Assert.NotNull(firstField);
             Assert.NotNull(secondField);
 
@@ -346,7 +407,7 @@ namespace CsvProc9000.Tests.Csv
                 .Should()
                 .Be("some value");
         }
-        
+
         [Fact]
         public void Apply_Updates_When_Same_Field_With_Mode_AddOrUpdate()
         {
@@ -361,10 +422,24 @@ namespace CsvProc9000.Tests.Csv
             {
                 new()
                 {
-                    Conditions = new List<Condition> { new() { Field = targetField, Value = targetFieldValueCondition } },
-                    Changes = new List<Change> { new() { Field = targetField, Value = targetFieldChangeValue, Mode = ChangeMode.AddOrUpdate, FieldIndex = 1} } }
+                    Conditions =
+                        new List<Condition>
+                        {
+                            new() { Field = targetField, Value = targetFieldValueCondition }
+                        },
+                    Changes = new List<Change>
+                    {
+                        new()
+                        {
+                            Field = targetField,
+                            Value = targetFieldChangeValue,
+                            Mode = ChangeMode.AddOrUpdate,
+                            FieldIndex = 1
+                        }
+                    }
+                }
             };
-            
+
             var file = new CsvFile("some file");
             var row = new CsvRow();
             var column1 = new CsvColumn(0, targetField);
@@ -372,12 +447,12 @@ namespace CsvProc9000.Tests.Csv
             row.AddField(column1, targetFieldValueCondition);
             row.AddField(column2, "some value");
             file.AddRow(row);
-            
+
             sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
             var firstField = row.Fields.FirstOrDefault(field => field.Column.Index == 0);
             var secondField = row.Fields.FirstOrDefault(field => field.Column.Index == 1);
-            
+
             Assert.NotNull(firstField);
             Assert.NotNull(secondField);
 
@@ -392,7 +467,7 @@ namespace CsvProc9000.Tests.Csv
                 .Be(targetFieldChangeValue);
         }
 
-        private static (ArrangeContext<ApplyRulesToCsvFile>, CsvProcessorOptions) 
+        private static (ArrangeContext<ApplyRulesToCsvFile>, CsvProcessorOptions)
             CreateContext()
         {
             var options = new CsvProcessorOptions();
