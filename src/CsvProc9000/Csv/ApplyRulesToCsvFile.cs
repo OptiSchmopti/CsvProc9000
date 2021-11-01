@@ -24,10 +24,12 @@ namespace CsvProc9000.Csv
         }
 
         public void Apply(
-            CsvFile csvFile,
+            [NotNull] CsvFile csvFile,
             Guid jobId,
             Guid jobThreadId)
         {
+            if (csvFile == null) throw new ArgumentNullException(nameof(csvFile));
+            
             _logger.LogDebug("T-{ThreadId} J-{JobId}# Applying rules to file {File}...",
                 jobThreadId, jobId, csvFile.OriginalFileName);
 
