@@ -79,6 +79,8 @@ namespace CsvProc9000
             services.AddSingleton<IApplyRulesToCsvFile, ApplyRulesToCsvFile>();
             services.AddSingleton<ICsvExporter, CsvExporter>();
             services.AddSingleton<ICsvImporter, CsvImporter>();
+            services.AddSingleton<ICsvWriterFactory, CsvWriterFactory>();
+            services.AddSingleton<ICsvReaderFactory, CsvReaderFactory>();
 
             services.AddSingleton<IJobPool, JobPool>();
             services.AddTransient<ICsvProcessJobThread, CsvProcessJobThread>();

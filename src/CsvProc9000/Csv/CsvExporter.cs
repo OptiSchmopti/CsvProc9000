@@ -1,12 +1,9 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using CsvProc9000.Csv.Contracts;
 using CsvProc9000.Model.Csv;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +13,14 @@ namespace CsvProc9000.Csv
     internal sealed class CsvExporter : ICsvExporter
     {
         private readonly IFileSystem _fileSystem;
+        private readonly ICsvWriterFactory _writerFactory;
 
         public CsvExporter(
-            [NotNull] IFileSystem fileSystem)
+            [NotNull] IFileSystem fileSystem,
+            [NotNull] ICsvWriterFactory writerFactory)
         {
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _writerFactory = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
         }
 
         public async Task ExportAsync(
@@ -37,10 +37,7 @@ namespace CsvProc9000.Csv
 
             MakeSureDirectoryExists(destinationFileName);
 
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = delimiter };
-
-            await using var streamWriter = new StreamWriter(destinationFileName);
-            await using var writer = new CsvWriter(streamWriter, csvConfiguration);
+            await using var writer = _writerFactory.Create(destinationFileName, delimiter);
 
             var columns = GetColumns(file).ToList();
 

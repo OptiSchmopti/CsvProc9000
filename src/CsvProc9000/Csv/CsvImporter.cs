@@ -1,14 +1,11 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using CsvProc9000.Csv.Contracts;
 using CsvProc9000.Model;
 using CsvProc9000.Model.Csv;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,12 +13,11 @@ namespace CsvProc9000.Csv
 {
     internal sealed class CsvImporter : ICsvImporter
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly ICsvReaderFactory _readerFactory;
 
-        public CsvImporter(
-            [NotNull] IFileSystem fileSystem)
+        public CsvImporter([NotNull] ICsvReaderFactory readerFactory)
         {
-            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _readerFactory = readerFactory ?? throw new ArgumentNullException(nameof(readerFactory));
         }
 
         public async Task<Result<CsvFile>> ImportAsync(
@@ -48,17 +44,7 @@ namespace CsvProc9000.Csv
             string fileName,
             string delimiter)
         {
-            // FileShare.None, so that no other process can use the file, while we're reading
-            // and we're aware, when the file is still locked by another process
-            await using var fileStream =
-                _fileSystem.FileStream.Create(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-            using var streamReader = new StreamReader(fileStream);
-
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = delimiter, HasHeaderRecord = true
-            };
-            using var reader = new CsvReader(streamReader, csvConfiguration);
+            using var reader = _readerFactory.Create(fileName, delimiter);
 
             var file = new CsvFile(fileName);
             var headers = await GetHeadersAsync(fileName, reader);
