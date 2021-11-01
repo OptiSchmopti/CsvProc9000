@@ -43,6 +43,8 @@ namespace CsvProc9000.Csv
 
             await WriteHeadersAsync(columns, writer, wrapValuesInQuotes);
             await WriteRowsAsync(file, columns, writer, wrapValuesInQuotes);
+
+            await writer.FlushAsync();
         }
 
         private void MakeSureDirectoryExists(string destinationFileName)
