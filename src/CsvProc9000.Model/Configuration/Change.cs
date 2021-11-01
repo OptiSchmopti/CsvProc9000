@@ -1,7 +1,9 @@
 ﻿using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CsvProc9000.Model.Configuration
 {
+    [ExcludeFromCodeCoverage] // DTO
     public class Change
     {
         [UsedImplicitly]

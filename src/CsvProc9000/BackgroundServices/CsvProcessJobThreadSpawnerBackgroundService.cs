@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace CsvProc9000.BackgroundServices
     {
         private readonly CsvProcessorOptions _csvProcessorOptions;
         private readonly ICsvProcessJobThreadFactory _jobThreadFactory;
+
+        private readonly List<IDisposable> _disposables = new ();
 
         public CsvProcessJobThreadSpawnerBackgroundService(
             [NotNull] IOptions<CsvProcessorOptions> csvProcessorOptions,
@@ -33,9 +36,18 @@ namespace CsvProc9000.BackgroundServices
             {
                 var jobThread = _jobThreadFactory.Create();
                 jobThread.Start(stoppingToken);
+                _disposables.Add(jobThread);
             }
 
             return Task.CompletedTask;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            foreach (var disposable in _disposables)
+                disposable?.Dispose();
         }
     }
 }

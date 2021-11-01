@@ -75,6 +75,27 @@ namespace CsvProc9000.Tests.BackgroundServices
                     .Verify(thread => 
                         thread.Start(It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Fact]
+        public async Task Disposes_Threads()
+        {
+            var (context, options) = CreateContext();
+            var sut = context.Build();
+
+            var jobThread = new Mock<ICsvProcessJobThread>();
+            context
+                .For<ICsvProcessJobThreadFactory>()
+                .Setup(factory => factory.Create())
+                .Returns(jobThread.Object);
+
+            options.JobThreadCount = 1;
+
+            await sut.StartAsync(CancellationToken.None);
+            
+            sut.Dispose();
+            
+            jobThread.Verify(thread => thread.Dispose(), Times.Once);
+        }
         
         private static (ArrangeContext<CsvProcessJobThreadSpawnerBackgroundService>, CsvProcessorOptions) 
             CreateContext()

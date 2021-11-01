@@ -1,17 +1,19 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace CsvProc9000.Model.Csv
 {
+    // TODO: Move this logic into a service of some kind?
+    [ExcludeFromCodeCoverage] // DTO - yes there's some logic here, but it's mostly tested through other test's
     public class CsvRow
     {
         private readonly List<CsvField> _fields = new();
 
         public IEnumerable<CsvField> Fields => _fields;
 
-        public void AddField([NotNull] CsvColumn column, [NotNull] string fieldValue)
+        public void AddField([JetBrains.Annotations.NotNull] CsvColumn column, [JetBrains.Annotations.NotNull] string fieldValue)
         {
             if (column == null) throw new ArgumentNullException(nameof(column));
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
@@ -19,7 +21,7 @@ namespace CsvProc9000.Model.Csv
             _fields.Add(new CsvField(column, fieldValue));
         }
 
-        public void AddField([NotNull] string fieldName, [NotNull] string fieldValue)
+        public void AddField([JetBrains.Annotations.NotNull] string fieldName, [JetBrains.Annotations.NotNull] string fieldValue)
         {
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
             if (string.IsNullOrWhiteSpace(fieldName))
@@ -31,7 +33,7 @@ namespace CsvProc9000.Model.Csv
             AddField(column, fieldValue);
         }
 
-        public void AddOrUpdateField([NotNull] string fieldName, [NotNull] string fieldValue, int? fieldIndex)
+        public void AddOrUpdateField([JetBrains.Annotations.NotNull] string fieldName, [JetBrains.Annotations.NotNull] string fieldValue, int? fieldIndex)
         {
             if (fieldValue == null) throw new ArgumentNullException(nameof(fieldValue));
             if (string.IsNullOrWhiteSpace(fieldName))

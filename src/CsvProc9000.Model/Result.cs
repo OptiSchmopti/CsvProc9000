@@ -1,5 +1,8 @@
-﻿namespace CsvProc9000.Model
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace CsvProc9000.Model
 {
+    [ExcludeFromCodeCoverage] // DTO
     public class Result<T>
     {
         public Result(

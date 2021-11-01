@@ -1,14 +1,14 @@
 ﻿using CsvProc9000.Jobs.Contracts;
-using JetBrains.Annotations;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 
 namespace CsvProc9000.Jobs
 {
+    [ExcludeFromCodeCoverage] // DTO
     internal sealed class CsvProcessJob : IJob
     {
-        public CsvProcessJob(
-            [NotNull] IFileInfo targetFile)
+        public CsvProcessJob([NotNull] IFileInfo targetFile)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
 

@@ -1,7 +1,7 @@
 ﻿using CsvProc9000.Jobs.Contracts;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,10 +13,12 @@ namespace CsvProc9000.Jobs
         private readonly ILogger<CsvProcessJobThread> _logger;
         private readonly ICsvProcessJobWorker _worker;
 
+        private Task _processThreadTask;
+
         public CsvProcessJobThread(
-            [NotNull] IJobPool jobPool,
-            [NotNull] ILogger<CsvProcessJobThread> logger,
-            [NotNull] ICsvProcessJobWorker worker)
+            [JetBrains.Annotations.NotNull] IJobPool jobPool,
+            [JetBrains.Annotations.NotNull] ILogger<CsvProcessJobThread> logger,
+            [JetBrains.Annotations.NotNull] ICsvProcessJobWorker worker)
         {
             _jobPool = jobPool ?? throw new ArgumentNullException(nameof(jobPool));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -29,7 +31,13 @@ namespace CsvProc9000.Jobs
         {
             _logger.LogTrace("Started Job-Thread {Id}...", ThreadId);
 
-            Task.Run(() => ProcessThread(stoppingToken), CancellationToken.None);
+            _processThreadTask = Task.Run(() => ProcessThread(stoppingToken), CancellationToken.None);
+        }
+        
+        [ExcludeFromCodeCoverage] // no need to test this
+        public void Dispose()
+        {
+            _processThreadTask?.Dispose();
         }
 
         private async Task ProcessThread(CancellationToken stoppingToken)

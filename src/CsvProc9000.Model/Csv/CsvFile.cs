@@ -1,14 +1,15 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CsvProc9000.Model.Csv
 {
+    [ExcludeFromCodeCoverage] // DTO
     public class CsvFile
     {
         private readonly List<CsvRow> _rows = new();
 
-        public CsvFile([NotNull] string fileName)
+        public CsvFile([JetBrains.Annotations.NotNull] string fileName)
         {
             OriginalFileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
         }
@@ -17,7 +18,7 @@ namespace CsvProc9000.Model.Csv
 
         public IEnumerable<CsvRow> Rows => _rows;
 
-        public void AddRow([NotNull] CsvRow row)
+        public void AddRow([JetBrains.Annotations.NotNull] CsvRow row)
         {
             if (row == null) throw new ArgumentNullException(nameof(row));
 
