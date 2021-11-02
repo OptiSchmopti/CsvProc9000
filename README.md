@@ -2,7 +2,8 @@
 
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Uses SemVer 2.0.0](https://img.shields.io/badge/Uses%20SemVer-2.0.0-green)](https://semver.org/spec/v2.0.0.html)
-[![Latest Release](https://img.shields.io/github/v/release/OptiSchmopti/CsvProc9000?label=latest%20release&sort=semver)](https://github.com/OptiSchmopti/CsvProc9000/releases)  
+[![Latest Release](https://img.shields.io/github/v/release/OptiSchmopti/CsvProc9000?label=latest%20release&sort=semver)](https://github.com/OptiSchmopti/CsvProc9000/releases)
+[![codecov](https://codecov.io/gh/OptiSchmopti/CsvProc9000/branch/main/graph/badge.svg?token=AL5PLYOWHU)](https://codecov.io/gh/OptiSchmopti/CsvProc9000)  
 [![GitHub stars](https://img.shields.io/github/stars/OptiSchmopti/CsvProc9000?style=social)](https://github.com/OptiSchmopti/CsvProc9000/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/OptiSchmopti/CsvProc9000?style=social)](https://github.com/OptiSchmopti/CsvProc9000/network/members)
 [![GitHub watchers](https://img.shields.io/github/watchers/OptiSchmopti/CsvProc9000?style=social)](https://github.com/OptiSchmopti/CsvProc9000/watchers)
