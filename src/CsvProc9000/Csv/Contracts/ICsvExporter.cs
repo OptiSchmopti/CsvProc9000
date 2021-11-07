@@ -10,6 +10,7 @@ namespace CsvProc9000.Csv.Contracts
             [NotNull] CsvFile file,
             [NotNull] string destinationFileName,
             [NotNull] string delimiter,
+            [NotNull] string charset,
             bool wrapValuesInQuotes = false);
     }
 }

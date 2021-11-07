@@ -116,6 +116,7 @@ namespace CsvProc9000.Jobs
                 await _csvExporter.ExportAsync(
                     file, destinationFileName,
                     _csvProcessorOptions.OutboxDelimiter,
+                    _csvProcessorOptions.OutboxFileCharset,
                     _csvProcessorOptions.OutboxValuesInQuotes);
 
                 return true;

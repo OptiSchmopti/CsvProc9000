@@ -27,6 +27,7 @@ namespace CsvProc9000.Csv
             CsvFile file,
             string destinationFileName,
             string delimiter,
+            string charset,
             bool wrapValuesInQuotes = false)
         {
             if (file == null) throw new ArgumentNullException(nameof(file));
@@ -34,10 +35,12 @@ namespace CsvProc9000.Csv
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(destinationFileName));
             if (string.IsNullOrWhiteSpace(delimiter))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(delimiter));
+            if (string.IsNullOrWhiteSpace(charset))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(charset));
 
             MakeSureDirectoryExists(destinationFileName);
 
-            await using var writer = _writerFactory.Create(destinationFileName, delimiter);
+            await using var writer = _writerFactory.Create(destinationFileName, delimiter, charset);
 
             var columns = GetColumns(file).ToList();
 
