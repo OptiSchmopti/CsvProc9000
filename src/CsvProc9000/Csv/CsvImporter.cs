@@ -34,9 +34,9 @@ namespace CsvProc9000.Csv
                 var file = await DoImportAsync(fileName, delimiter);
                 return new Result<CsvFile>(true, file);
             }
-            catch (IOException)
+            catch (IOException ex)
             {
-                return new Result<CsvFile>(false);
+                return new Result<CsvFile>(false, failureMessage: ex.Message);
             }
         }
 

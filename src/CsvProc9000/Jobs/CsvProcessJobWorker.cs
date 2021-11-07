@@ -95,6 +95,9 @@ namespace CsvProc9000.Jobs
 
                 if (result.IsSuccess)
                     csvFile = result.Value;
+                else
+                    _logger.LogWarning("T-{ThreadId} J-{JobId}# Import failed, because of '{Message}'. Retrying...",
+                        jobThreadId, job.Id, result.FailureMessage);
             }
 
             return csvFile;
