@@ -5,6 +5,7 @@ using CsvProc9000.Model.Csv;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +34,8 @@ namespace CsvProc9000.Csv
                 var file = await DoImportAsync(fileName, delimiter);
                 return new Result<CsvFile>(true, file);
             }
-            catch (Exception)
+            // TODO: I have to rethink this thing... it's weird...
+            catch (IOException)
             {
                 return new Result<CsvFile>(false);
             }
