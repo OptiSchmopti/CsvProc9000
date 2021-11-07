@@ -35,9 +35,9 @@ namespace CsvProc9000.Csv
                 return new Result<CsvFile>(true, file);
             }
             // TODO: I have to rethink this thing... it's weird...
-            catch (IOException)
+            catch (IOException ex)
             {
-                return new Result<CsvFile>(false);
+                return new Result<CsvFile>(false, failureMessage: ex.Message);
             }
         }
 
