@@ -88,6 +88,7 @@ namespace CsvProc9000.Jobs
              * because it's still being copied or written to, so we have to wait until that is finished
              */
             CsvFile csvFile = null;
+            // TODO: I have to rethink this thing... it's weird...
             while (csvFile == null)
             {
                 var result =
@@ -119,6 +120,7 @@ namespace CsvProc9000.Jobs
                 await _csvExporter.ExportAsync(
                     file, destinationFileName,
                     _csvProcessorOptions.OutboxDelimiter,
+                    _csvProcessorOptions.OutboxFileCharset,
                     _csvProcessorOptions.OutboxValuesInQuotes);
 
                 return true;

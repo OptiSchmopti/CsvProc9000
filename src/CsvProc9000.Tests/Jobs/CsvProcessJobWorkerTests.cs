@@ -117,8 +117,13 @@ namespace CsvProc9000.Tests.Jobs
             context
                 .For<ICsvExporter>()
                 .Verify(
-                    exporter => exporter.ExportAsync(It.IsAny<CsvFile>(), It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<bool>()), Times.Once);
+                    exporter => exporter.ExportAsync(
+                        It.IsAny<CsvFile>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<string>(),
+                        It.IsAny<bool>()), 
+                    Times.Once);
 
 
             if (shouldDeleteFile)
@@ -156,7 +161,11 @@ namespace CsvProc9000.Tests.Jobs
 
             context
                 .For<ICsvExporter>()
-                .Setup(exporter => exporter.ExportAsync(It.IsAny<CsvFile>(), It.IsAny<string>(), It.IsAny<string>(),
+                .Setup(exporter => exporter.ExportAsync(
+                    It.IsAny<CsvFile>(), 
+                    It.IsAny<string>(), 
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
                     It.IsAny<bool>()))
                 .Throws<Exception>();
 

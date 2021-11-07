@@ -28,6 +28,9 @@ namespace CsvProc9000.Options
         public bool OutboxValuesInQuotes { get; set; }
 
         [UsedImplicitly]
+        public string OutboxFileCharset { get; set; } = "UTF-8";
+
+        [UsedImplicitly]
         public List<Rule> Rules { get; set; }
     }
 }

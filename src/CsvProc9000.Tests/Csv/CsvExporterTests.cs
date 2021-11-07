@@ -33,20 +33,27 @@ namespace CsvProc9000.Tests.Csv
             var (context, _) = CreateContext();
             var sut = context.Build();
 
-            await Assert.ThrowsAnyAsync<ArgumentNullException>(() => sut.ExportAsync(null!, "something", ","));
+            await Assert.ThrowsAnyAsync<ArgumentNullException>(() => sut.ExportAsync(null!, "something", ",", "charset"));
+            
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), null!, ",", "charset"));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), string.Empty, ",", "charset"));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), " ", ",", "charset"));
 
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), null!, ","));
-            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
-                sut.ExportAsync(new CsvFile("something"), string.Empty, ","));
-            await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.ExportAsync(new CsvFile("something"), " ", ","));
-
 
             await Assert.ThrowsAnyAsync<ArgumentException>(() =>
-                sut.ExportAsync(new CsvFile("something"), "something", null!));
+                sut.ExportAsync(new CsvFile("something"), "something", null!, "charset"));
             await Assert.ThrowsAnyAsync<ArgumentException>(() =>
-                sut.ExportAsync(new CsvFile("something"), "something", string.Empty));
+                sut.ExportAsync(new CsvFile("something"), "something", string.Empty, "charset"));
             await Assert.ThrowsAnyAsync<ArgumentException>(() =>
-                sut.ExportAsync(new CsvFile("something"), "something", " "));
+                sut.ExportAsync(new CsvFile("something"), "something", " ", "charset"));
+            
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", ",", null!));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", ",", string.Empty));
+            await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+                sut.ExportAsync(new CsvFile("something"), "something", ",", " "));
         }
 
         [Fact]
@@ -71,7 +78,7 @@ namespace CsvProc9000.Tests.Csv
                 .Returns(fileInfo.Object);
 
             var file = new CsvFile("something");
-            await sut.ExportAsync(file, "some file", ",");
+            await sut.ExportAsync(file, "some file", ",", "charset");
 
             directoryInfo.Verify(di => di.Create(), Times.Once);
         }
@@ -98,7 +105,7 @@ namespace CsvProc9000.Tests.Csv
             file.AddRow(row1);
             file.AddRow(row2);
 
-            await sut.ExportAsync(file, "something", ",");
+            await sut.ExportAsync(file, "something", ",", "charset");
 
             // 3 = 1 header, 2 rows
             writer.Verify(w => w.NextRecordAsync(), Times.Exactly(3));
@@ -120,7 +127,7 @@ namespace CsvProc9000.Tests.Csv
             var writer = new Mock<IWriter>();
             context
                 .For<ICsvWriterFactory>()
-                .Setup(wf => wf.Create(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(wf => wf.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(writer.Object);
 
             var directoryInfo = new Mock<IDirectoryInfo>();

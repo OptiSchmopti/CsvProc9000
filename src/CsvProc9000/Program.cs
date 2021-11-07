@@ -4,6 +4,8 @@ using CsvProc9000.Csv.Contracts;
 using CsvProc9000.Jobs;
 using CsvProc9000.Jobs.Contracts;
 using CsvProc9000.Options;
+using CsvProc9000.Utils;
+using CsvProc9000.Utils.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +14,7 @@ using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
+using System.Text;
 using System.Threading.Tasks;
 using ILogger = Serilog.ILogger;
 
@@ -88,9 +91,13 @@ namespace CsvProc9000
 
             services.AddSingleton<ICsvProcessJobThreadFactory, CsvProcessJobThreadFactory>();
 
+            services.AddSingleton<IFileHelper, FileHelper>();
+
             services.AddHostedService<CsvFileWatcherBackgroundService>();
             services.AddHostedService<CsvExistingFileWatcherBackgroundService>();
             services.AddHostedService<CsvProcessJobThreadSpawnerBackgroundService>();
+            
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
     }
 }
