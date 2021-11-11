@@ -79,6 +79,7 @@ namespace CsvProc9000.Tests.BackgroundServices
             sut.Dispose();
 
             fileSystemWatcher.VerifyRemove(watcher => watcher.Created -= It.IsAny<FileSystemEventHandler>());
+            fileSystemWatcher.VerifyRemove(watcher => watcher.Renamed -= It.IsAny<RenamedEventHandler>());
         }
 
         [Fact]
@@ -112,6 +113,44 @@ namespace CsvProc9000.Tests.BackgroundServices
             fileSystemWatcher
                 .Raise(watcher => watcher.Created += null,
                     new FileSystemEventArgs(WatcherChangeTypes.All, "something", "some file"));
+
+            context
+                .For<IJobPool>()
+                .Verify(pool => pool.Add(It.Is<CsvProcessJob>(job =>
+                    job.TargetFile == fileInfoMock.Object)), Times.Once);
+        }
+
+        [Fact]
+        public void Not_Add_Renamed_Files_To_Pool_When_Wrong_Change_Type()
+        {
+            var (context, fileSystemWatcher) = CreateContext();
+            _ = context.Build();
+
+            fileSystemWatcher
+                .Raise(watcher => watcher.Renamed += null,
+                    new RenamedEventArgs(WatcherChangeTypes.Deleted, "something", "some name", "some old name"));
+
+            context
+                .For<IJobPool>()
+                .Verify(pool => pool.Add(It.IsAny<IJob>()), Times.Never);
+        }
+
+        [Fact]
+        public void Add_Renamed_Files_To_Pool()
+        {
+            var (context, fileSystemWatcher) = CreateContext();
+            _ = context.Build();
+
+            var fileInfoMock = new Mock<IFileInfo>();
+
+            context
+                .For<IFileSystem>()
+                .Setup(fileSystem => fileSystem.FileInfo.FromFileName(It.IsAny<string>()))
+                .Returns(fileInfoMock.Object);
+
+            fileSystemWatcher
+                .Raise(watcher => watcher.Renamed += null,
+                    new RenamedEventArgs(WatcherChangeTypes.All, "something", "some file", "some old name"));
 
             context
                 .For<IJobPool>()

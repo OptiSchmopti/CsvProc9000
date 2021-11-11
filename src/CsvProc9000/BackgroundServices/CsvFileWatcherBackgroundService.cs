@@ -36,6 +36,7 @@ namespace CsvProc9000.BackgroundServices
             _fileSystemWatcher.Filter = "*.csv";
 
             _fileSystemWatcher.Created += OnFileCreated;
+            _fileSystemWatcher.Renamed += OnFileRenamed;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -60,6 +61,7 @@ namespace CsvProc9000.BackgroundServices
             base.Dispose();
 
             _fileSystemWatcher.Created -= OnFileCreated;
+            _fileSystemWatcher.Renamed -= OnFileRenamed;
             _fileSystemWatcher.Dispose();
         }
 
@@ -68,11 +70,24 @@ namespace CsvProc9000.BackgroundServices
             if (!eventArgs.ChangeType.HasFlag(WatcherChangeTypes.Created)) return;
 
             _logger.LogDebug("FileWatcher: File Created: {File}", eventArgs.FullPath);
+            AddJobForFile(eventArgs.FullPath);
+        }
 
-            var file = _fileSystem.FileInfo.FromFileName(eventArgs.FullPath);
+        private void OnFileRenamed(object sender, RenamedEventArgs eventArgs)
+        {
+            if (!eventArgs.ChangeType.HasFlag(WatcherChangeTypes.Renamed)) return;
+            
+            _logger.LogDebug("FileWatcher: File Renamed: from {OldFile} to {File}", 
+                eventArgs.OldFullPath, eventArgs.FullPath);
+            AddJobForFile(eventArgs.FullPath);
+        }
+
+        private void AddJobForFile(string filePath)
+        {
+            var file = _fileSystem.FileInfo.FromFileName(filePath);
             var job = new CsvProcessJob(file);
 
-            _logger.LogDebug("FileWatcher: Added CsvProcessJob #{JobId}", job.Id);
+            _logger.LogDebug("FileWatcher: Added CsvProcessJob #{JobId} for {File}", job.Id, filePath);
 
             _jobPool.Add(job);
         }
