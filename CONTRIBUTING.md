@@ -26,5 +26,6 @@ To help feel everyone at home, we have a [Code Of Conduct](CODE_OF_CONDUCT.md) t
 ## Code contribution checklist
 
 - [ ] New code addition/deletion should not break existing flow of a system
+- [ ] Any new addition to the code needs to be tested by a unit-test
 - [ ] Ensure that any (development) dependencies are actually necessary for the change that you're implementing
 - [ ] Update the [README](README.md) if there are any changes to the public API and/or configuration
