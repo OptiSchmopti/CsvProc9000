@@ -13,7 +13,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-        <PackageReference Include="System.IO.Abstractions" Version="14.0.13" />
+        <PackageReference Include="System.IO.Abstractions" Version="16.0.1" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
         <PackageReference Include="Ude.NetStandard" Version="1.2.0" />
     </ItemGroup>
