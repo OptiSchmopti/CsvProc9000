@@ -65,7 +65,7 @@ namespace CsvProc9000
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.File(
-                    "./logs/application-log.log", 
+                    $"{AppDomain.CurrentDomain.BaseDirectory}/logs/application-log.log", 
                     fileSizeLimitBytes: null, 
                     retainedFileCountLimit: null, 
                     rollingInterval: RollingInterval.Day)
