@@ -64,7 +64,11 @@ namespace CsvProc9000
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File("./logs/application-log.log")
+                .WriteTo.File(
+                    "./logs/application-log.log", 
+                    fileSizeLimitBytes: null, 
+                    retainedFileCountLimit: null, 
+                    rollingInterval: RollingInterval.Day)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
 
