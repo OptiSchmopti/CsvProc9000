@@ -4,6 +4,11 @@ html, body {
     font-family: 'Quicksand', Helvetica, Arial, sans-serif;
 }
 
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+}
+
 h1:focus {
     outline: none;
 }
@@ -16,6 +21,12 @@ a, .btn-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}
+
+.btn-square {
+    width: 10rem;
+    height: 10rem;
+    font-size: 1.2rem;
 }
 
 .content {
@@ -65,6 +76,25 @@ a, .btn-link {
 
 .status-bar-safe-area {
     display: none;
+}
+
+.input-with-button {
+    display: flex;
+    flex-direction: row;
+    
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 1px;
+}
+
+.input-with-button > input {
+    /* tell the input to use all the available space */
+    flex-grow: 2;
+    border: none;
+}
+
+.input-with-button > input:focus {
+    outline: none;
 }
 
 @supports (-webkit-touch-callout: none) {

@@ -1,0 +1,131 @@
+﻿@page "/config"
+@using CsvProc9000.Model.Configuration
+@using CsvProc9000.UI.Settings
+@using CsvProc9000.UI.Components
+@inject ISettingsLoader SettingsLoader
+
+<!-- TODO: GO BACK TO HOME link! -->
+
+<h1>Configure</h1>
+
+<p>
+    Here you can configure your <b>CsvProc9000</b> service to your needs.
+</p>
+
+<div class="load">
+    <div>
+        <div>
+            Where is the currently installed service located?
+        </div>
+        <div>
+            <FolderSelect DialogueTitle="Select the service installation location" @bind-SelectedPath="@_serviceInstallationPath"></FolderSelect>
+        </div>
+    </div>
+
+    <div class="mt-1">
+        <button class="btn btn-primary" disabled="@IsLoadButtonDisabled" @onclick="LoadSettings">Load settings</button>
+    </div>
+</div>
+
+@{
+    if (_settings != null)
+    {
+        <div class="settings mt-4">
+            <h2>Settings</h2>
+            <p>
+                Change the settings of your current service installation here:
+            </p>
+
+            <div class="mt-2">
+                <h3>Inbox</h3>
+
+                <div class="row">
+                    <div>
+                        Inbox directory:
+                    </div>
+                    <div>
+                        <FolderSelect DialogueTitle="Select the Inbox" @bind-SelectedPath="@_settings.Inbox"></FolderSelect>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        Inbox delimiter:
+                    </div>
+                    <div>
+                        <InputText type="text" @bind-Value="@_settings.InboxDelimiter"></InputText>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        Should the file in the Inbox be deleted?
+                    </div>
+                    <div>
+                        <InputCheckbox @bind-Value="@_settings.DeleteInboxFile"></InputCheckbox>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <h3>Outbox</h3>
+
+                <div class="row">
+                    <div>
+                        Outbox directory:
+                    </div>
+                    <div>
+                        <FolderSelect DialogueTitle="Select the Outbox" @bind-SelectedPath="@_settings.Outbox"></FolderSelect>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        Outbox delimiter:
+                    </div>
+                    <div>
+                        <InputText type="text" @bind-Value="@_settings.OutboxDelimiter"></InputText>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        Outbox charset:
+                    </div>
+                    <div>
+                        <InputText type="text" @bind-Value="@_settings.OutboxFileCharset"></InputText>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        Should the values in the Outbox-file be in quotes?
+                    </div>
+                    <div>
+                        <InputCheckbox @bind-Value="@_settings.OutboxValuesInQuotes"></InputCheckbox>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-2">
+                <h3>Rules</h3>
+                
+                <p>TODO...</p>
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    private string _serviceInstallationPath = string.Empty;
+    private bool IsLoadButtonDisabled => string.IsNullOrWhiteSpace(_serviceInstallationPath);
+    private CsvProcessorOptions _settings;
+
+    private void LoadSettings()
+    {
+        var settings = SettingsLoader.Load(_serviceInstallationPath);
+        _settings = settings;
+    }
+
+}

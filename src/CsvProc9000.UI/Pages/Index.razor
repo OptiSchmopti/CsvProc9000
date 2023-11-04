@@ -1,5 +1,51 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
-<h1>Hello, world!</h1>
+<h1>CsvProc900</h1>
 
-Welcome to your new app.
+<p>
+    Welcome to the UI application for the <b>CsvProc900!</b>
+</p>
+<p>
+    Here are some options you can use:
+</p>
+<div class="navigation">
+    <div class="row">
+        <div class="col-sm">
+            <button type="button" class="btn btn-primary btn-square" @onclick="NavigateToConfigPage">
+                <div class="oi oi-cog">
+                </div>
+                <div>
+                    Config
+                </div>
+            </button>
+        </div>
+
+        <div class="col-sm">
+            <button type="button" class="btn btn-primary btn-square" disabled>
+                <div class="oi oi-clock">
+                </div>
+                <div>
+                    Coming Soon™
+                </div>
+            </button>
+        </div>
+
+        <div class="col-sm">
+            <button type="button" class="btn btn-primary btn-square" disabled>
+                <div class="oi oi-clock">
+                </div>
+                <div>
+                    Coming Soon™
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void NavigateToConfigPage()
+    {
+        NavigationManager.NavigateTo("config");
+    }
+}

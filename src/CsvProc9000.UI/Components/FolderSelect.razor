@@ -1,0 +1,35 @@
+﻿@using CsvProc9000.UI.Dialogues
+@inject IFolderPicker FolderPicker
+
+<div class="input-with-button">
+    <InputText type="text" @bind-Value="@SelectedPath"></InputText>
+    <button class="btn btn-primary" @onclick="SelectFolderPath">Select</button>
+</div>
+
+@code {
+    private string _selectedPath = string.Empty;
+    
+    [Parameter]
+    public string DialogueTitle { get; set; }
+    
+    [Parameter]
+    public string SelectedPath
+    {
+        get => _selectedPath;
+        set
+        {
+            if (value == _selectedPath) return;
+            _selectedPath = value;
+            SelectedPathChanged.InvokeAsync(value);
+        }
+    }
+    
+    [Parameter]
+    public EventCallback<string> SelectedPathChanged { get; set; }
+
+    private void SelectFolderPath()
+    {
+        var selectedPath = FolderPicker.Show(DialogueTitle);
+        SelectedPath = selectedPath;
+    }
+}
