@@ -40,4 +40,8 @@
     <ItemGroup>
         <ProjectReference Include="..\CsvProc9000.Model\CsvProc9000.Model.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Options\" />
+    </ItemGroup>
 </Project>

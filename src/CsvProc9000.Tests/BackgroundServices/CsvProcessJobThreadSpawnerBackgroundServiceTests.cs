@@ -1,7 +1,7 @@
 ﻿using ArrangeContext.Moq;
 using CsvProc9000.BackgroundServices;
 using CsvProc9000.Jobs.Contracts;
-using CsvProc9000.Options;
+using CsvProc9000.Model.Configuration;
 using FluentAssertions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

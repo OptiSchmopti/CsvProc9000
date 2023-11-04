@@ -1,7 +1,7 @@
 ﻿using CsvProc9000.Csv.Contracts;
 using CsvProc9000.Jobs.Contracts;
+using CsvProc9000.Model.Configuration;
 using CsvProc9000.Model.Csv;
-using CsvProc9000.Options;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
