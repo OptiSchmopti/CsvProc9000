@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using CsvProc9000.UI.Data;
 
 namespace CsvProc9000.UI;
 
@@ -10,7 +9,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .ConfigureFonts(fonts => { fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); });
+            .ConfigureFonts(fonts => { fonts.AddFont("Quicksand-VariableFont_wght.ttf", "Quicksand");});
 
         builder.Services.AddMauiBlazorWebView();
 
@@ -18,8 +17,6 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
-
-        builder.Services.AddSingleton<WeatherForecastService>();
 
         return builder.Build();
     }
