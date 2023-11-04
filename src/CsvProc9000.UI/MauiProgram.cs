@@ -1,6 +1,7 @@
 ﻿using CsvProc9000.UI.Dialogues;
 using CsvProc9000.UI.Platforms.Windows;
 using CsvProc9000.UI.Settings;
+using CsvProc9000.UI.States;
 using Microsoft.Extensions.Logging;
 
 namespace CsvProc9000.UI;
@@ -28,6 +29,10 @@ public static class MauiProgram
         builder
             .Services
             .AddSingleton<ISettingsLoader, SettingsLoader>();
+
+        builder
+            .Services
+            .AddSingleton<IConfigurationState, ConfigurationState>();
 
         return builder.Build();
     }

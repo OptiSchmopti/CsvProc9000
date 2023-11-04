@@ -1,8 +1,11 @@
 ﻿@page "/config"
-@using CsvProc9000.Model.Configuration
-@using CsvProc9000.UI.Settings
+
 @using CsvProc9000.UI.Components
-@inject ISettingsLoader SettingsLoader
+@using CsvProc9000.UI.States
+@using CsvProc9000.Model.Configuration
+
+@inject IConfigurationState State
+@inject NavigationManager NavigationManager
 
 <!-- TODO: GO BACK TO HOME link! -->
 
@@ -28,7 +31,7 @@
 </div>
 
 @{
-    if (_settings != null)
+    if (State.Settings != null)
     {
         <div class="settings mt-4">
             <h2>Settings</h2>
@@ -44,7 +47,7 @@
                         Inbox directory:
                     </div>
                     <div>
-                        <FolderSelect DialogueTitle="Select the Inbox" @bind-SelectedPath="@_settings.Inbox"></FolderSelect>
+                        <FolderSelect DialogueTitle="Select the Inbox" @bind-SelectedPath="@State.Settings.Inbox"></FolderSelect>
                     </div>
                 </div>
 
@@ -53,7 +56,7 @@
                         Inbox delimiter:
                     </div>
                     <div>
-                        <InputText type="text" @bind-Value="@_settings.InboxDelimiter"></InputText>
+                        <InputText type="text" @bind-Value="@State.Settings.InboxDelimiter"></InputText>
                     </div>
                 </div>
 
@@ -62,7 +65,7 @@
                         Should the file in the Inbox be deleted?
                     </div>
                     <div>
-                        <InputCheckbox @bind-Value="@_settings.DeleteInboxFile"></InputCheckbox>
+                        <InputCheckbox @bind-Value="@State.Settings.DeleteInboxFile"></InputCheckbox>
                     </div>
                 </div>
             </div>
@@ -75,7 +78,7 @@
                         Outbox directory:
                     </div>
                     <div>
-                        <FolderSelect DialogueTitle="Select the Outbox" @bind-SelectedPath="@_settings.Outbox"></FolderSelect>
+                        <FolderSelect DialogueTitle="Select the Outbox" @bind-SelectedPath="@State.Settings.Outbox"></FolderSelect>
                     </div>
                 </div>
 
@@ -84,7 +87,7 @@
                         Outbox delimiter:
                     </div>
                     <div>
-                        <InputText type="text" @bind-Value="@_settings.OutboxDelimiter"></InputText>
+                        <InputText type="text" @bind-Value="@State.Settings.OutboxDelimiter"></InputText>
                     </div>
                 </div>
 
@@ -93,7 +96,7 @@
                         Outbox charset:
                     </div>
                     <div>
-                        <InputText type="text" @bind-Value="@_settings.OutboxFileCharset"></InputText>
+                        <InputText type="text" @bind-Value="@State.Settings.OutboxFileCharset"></InputText>
                     </div>
                 </div>
 
@@ -102,7 +105,7 @@
                         Should the values in the Outbox-file be in quotes?
                     </div>
                     <div>
-                        <InputCheckbox @bind-Value="@_settings.OutboxValuesInQuotes"></InputCheckbox>
+                        <InputCheckbox @bind-Value="@State.Settings.OutboxValuesInQuotes"></InputCheckbox>
                     </div>
                 </div>
             </div>
@@ -110,7 +113,24 @@
             <div class="mt-2">
                 <h3>Rules</h3>
                 
-                <p>TODO...</p>
+                @for (var index = 0; index < State.Settings.Rules.Count; index++)
+                {
+                    <div class="row mt-1">
+                        @{
+                            var ruleIndex = index;
+                            var rule = State.GetRuleAt(ruleIndex);
+                        }
+                        
+                        <div>
+                            <button class="btn btn-secondary" @onclick="() => NavigateToEditRule(ruleIndex)">@rule.GetName()</button>
+                            <button class="btn btn-danger oi oi-minus float-end" @onclick="() => RemoveRule(rule)"></button>
+                        </div>
+                    </div>
+                }
+                
+                <div class="mt-2">
+                    <button class="btn btn-success float-start oi oi-plus" @onclick="AddRule"></button>
+                </div>
             </div>
         </div>
     }
@@ -120,12 +140,32 @@
 
     private string _serviceInstallationPath = string.Empty;
     private bool IsLoadButtonDisabled => string.IsNullOrWhiteSpace(_serviceInstallationPath);
-    private CsvProcessorOptions _settings;
 
     private void LoadSettings()
     {
-        var settings = SettingsLoader.Load(_serviceInstallationPath);
-        _settings = settings;
+        State.ReadSettings(_serviceInstallationPath);
+    }
+
+    private void NavigateToEditRule(int ruleIndex)
+    {
+        NavigationManager.NavigateTo($"/rule/{ruleIndex}");
+    }
+
+    private void RemoveRule(Rule rule)
+    {
+        State.Settings.Rules.Remove(rule);
+    }
+
+    private void AddRule()
+    {
+        var newRule = new Rule
+        {
+            Name = "New Rule",
+        };
+        
+        State.Settings.Rules.Add(newRule);
+        
+        NavigateToEditRule(State.Settings.Rules.Count - 1);
     }
 
 }
