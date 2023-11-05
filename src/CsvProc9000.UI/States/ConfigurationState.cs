@@ -5,25 +5,34 @@ namespace CsvProc9000.UI.States;
 
 internal sealed class ConfigurationState : IConfigurationState
 {
-    private readonly ISettingsLoader _settingsLoader;
-
-    /// <inheritdoc />
-    public CsvProcessorOptions Settings { get; private set; }
+    private readonly ISettingsManager _settingsManager;
 
     /// <summary>
     ///     Constructor
     /// </summary>
-    public ConfigurationState(ISettingsLoader settingsLoader)
+    public ConfigurationState(ISettingsManager settingsManager)
     {
-        _settingsLoader = settingsLoader ?? throw new ArgumentNullException(nameof(settingsLoader));
+        _settingsManager = settingsManager ?? throw new ArgumentNullException(nameof(settingsManager));
     }
+
+    /// <inheritdoc />
+    public string SettingsDirectory { get; set; }
     
     /// <inheritdoc />
-    public void ReadSettings(string pathToSettings)
+    public CsvProcessorOptions Settings { get; private set; }
+    
+    /// <inheritdoc />
+    public void ReadSettings()
     {
-        var settings = _settingsLoader.Load(pathToSettings);
+        var settings = _settingsManager.Load(SettingsDirectory);
         settings.Rules ??= new List<Rule>();
         Settings = settings;
+    }
+
+    /// <inheritdoc />
+    public void WriteSettings(bool makeBackup)
+    {
+        _settingsManager.Write(SettingsDirectory, Settings, makeBackup);
     }
 
     /// <inheritdoc />

@@ -20,10 +20,10 @@
 <div class="load">
     <div>
         <div>
-            Where is the currently installed service located?
+            In which <i>directory</i> is the service currently installed?
         </div>
         <div>
-            <FolderSelect DialogueTitle="Select the service installation location" @bind-SelectedPath="@_serviceInstallationPath"></FolderSelect>
+            <FolderSelect DialogueTitle="Select the service installation location" @bind-SelectedPath="@State.SettingsDirectory"></FolderSelect>
         </div>
     </div>
 
@@ -65,8 +65,6 @@
                 <div class="row">
                     <div>
                         Should the file in the Inbox be deleted?
-                    </div>
-                    <div>
                         <InputCheckbox @bind-Value="@State.Settings.DeleteInboxFile"></InputCheckbox>
                     </div>
                 </div>
@@ -105,8 +103,6 @@
                 <div class="row">
                     <div>
                         Should the values in the Outbox-file be in quotes?
-                    </div>
-                    <div>
                         <InputCheckbox @bind-Value="@State.Settings.OutboxValuesInQuotes"></InputCheckbox>
                     </div>
                 </div>
@@ -135,13 +131,18 @@
                 </div>
             </div>
         </div>
+        
+        <div class="mt-5 mb-5 float-end">
+            Should the current settings be backed up?
+            <InputCheckbox @bind-Value="@_makeBackup"></InputCheckbox>
+            <button class="btn btn-primary" @onclick="SaveSettings">Save</button>
+        </div>
     }
 }
 
 @code {
-
-    private string _serviceInstallationPath = string.Empty;
-    private bool IsLoadButtonDisabled => string.IsNullOrWhiteSpace(_serviceInstallationPath);
+    private bool IsLoadButtonDisabled => string.IsNullOrWhiteSpace(State.SettingsDirectory);
+    private bool _makeBackup = true;
     
     private void GoToHome()
     {
@@ -150,7 +151,7 @@
 
     private void LoadSettings()
     {
-        State.ReadSettings(_serviceInstallationPath);
+        State.ReadSettings();
     }
 
     private void NavigateToEditRule(int ruleIndex)
@@ -173,5 +174,11 @@
         State.Settings.Rules.Add(newRule);
         
         NavigateToEditRule(State.Settings.Rules.Count - 1);
+    }
+
+    private void SaveSettings()
+    {
+        State.WriteSettings(_makeBackup);
+        GoToHome();
     }
 }

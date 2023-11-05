@@ -8,10 +8,19 @@ namespace CsvProc9000.UI.States;
 internal interface IConfigurationState
 {
     /// <summary>
+    ///     The directory of the settings
+    /// </summary>
+    string SettingsDirectory { get; set; }
+
+    /// <summary>
+    ///     The read in settings
+    /// </summary>
+    CsvProcessorOptions Settings { get; }
+    
+    /// <summary>
     ///     Reads in the settings from the given path
     /// </summary>
-    /// <param name="pathToSettings">The path to read in the settings from</param>
-    void ReadSettings(string pathToSettings);
+    void ReadSettings();
 
     /// <summary>
     ///     Gets the rule from the given index
@@ -21,7 +30,8 @@ internal interface IConfigurationState
     Rule GetRuleAt(int index);
 
     /// <summary>
-    ///     The read in settings
+    ///     Writes the settings to the desired settings path
     /// </summary>
-    CsvProcessorOptions Settings { get; }
+    /// <param name="makeBackup">Whether or not a backup should be made</param>
+    void WriteSettings(bool makeBackup);
 }

@@ -28,11 +28,15 @@ public static class MauiProgram
 
         builder
             .Services
-            .AddSingleton<ISettingsLoader, SettingsLoader>();
+            .AddSingleton<ISettingsManager, SettingsManager>();
 
         builder
             .Services
             .AddSingleton<IConfigurationState, ConfigurationState>();
+
+        builder
+            .Services
+            .AddSingleton<IConfigurationSerializer, ConfigurationSerializer>();
 
         return builder.Build();
     }
