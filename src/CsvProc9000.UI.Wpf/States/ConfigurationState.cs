@@ -2,6 +2,7 @@
 using CsvProc9000.UI.Wpf.Settings;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace CsvProc9000.UI.Wpf.States;
 
@@ -26,15 +27,30 @@ internal sealed class ConfigurationState : IConfigurationState
     /// <inheritdoc />
     public void ReadSettings()
     {
-        var settings = _settingsManager.Load(SettingsDirectory);
-        settings.Rules ??= new List<Rule>();
-        Settings = settings;
+        try
+        {
+            var settings = _settingsManager.Load(SettingsDirectory);
+            settings.Rules ??= new List<Rule>();
+            Settings = settings;
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show($"Was unable to load settings.\n\nFollowing was the cause: {exception.Message}", "Unable to load settings", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     /// <inheritdoc />
     public void WriteSettings(bool makeBackup)
     {
-        _settingsManager.Write(SettingsDirectory, Settings, makeBackup);
+        try
+        {
+            _settingsManager.Write(SettingsDirectory, Settings, makeBackup);
+            MessageBox.Show("Successfully written settings", "Success", MessageBoxButton.OK, MessageBoxImage.None);
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show($"Was unable to write settings.\n\nFollowing was the cause: {exception.Message}", "Unable to write settings", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     /// <inheritdoc />
