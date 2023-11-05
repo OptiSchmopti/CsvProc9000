@@ -13,7 +13,7 @@ public partial class App : Application
     {
         var window = base.CreateWindow(activationState);
 
-        window.Width = 800;
+        window.Width = 1200;
         window.Height = 1000;
 
         return window;
