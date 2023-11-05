@@ -11,6 +11,8 @@
 
 <h1>Configure</h1>
 
+<button class="btn btn-secondary btn-home oi oi-home" @onclick="GoToHome"></button>
+
 <p>
     Here you can configure your <b>CsvProc9000</b> service to your needs.
 </p>
@@ -140,6 +142,11 @@
 
     private string _serviceInstallationPath = string.Empty;
     private bool IsLoadButtonDisabled => string.IsNullOrWhiteSpace(_serviceInstallationPath);
+    
+    private void GoToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
 
     private void LoadSettings()
     {
@@ -167,5 +174,4 @@
         
         NavigateToEditRule(State.Settings.Rules.Count - 1);
     }
-
 }

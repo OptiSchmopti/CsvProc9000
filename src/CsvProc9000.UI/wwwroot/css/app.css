@@ -29,6 +29,14 @@ a, .btn-link {
     font-size: 1.2rem;
 }
 
+.btn-home {
+    margin-top: 5px;
+    margin-left: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .content {
     padding-top: 1.1rem;
 }
