@@ -9,8 +9,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
 
-        <EnableWindowsTargeting>true</EnableWindowsTargeting>
-
         <!-- Display name -->
         <ApplicationTitle>CsvProc9000 UI</ApplicationTitle>
 

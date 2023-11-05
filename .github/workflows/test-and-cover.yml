@@ -25,14 +25,11 @@ jobs:
       - name: Restore workloads
         run: dotnet workload restore
 
-      - name: Restore
-        run: dotnet restore
+      - name: Build 'CsvProc9000'
+        run: dotnet build "CsvProc9000/CsvProc9000.csproj"
 
-      - name: Build
-        run: dotnet build --no-restore
-
-      - name: Test
-        run: dotnet test --no-build --no-restore --collect:"XPlat Code Coverage" --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:SkipAutoProps=true
+      - name: Test 'CsvProc9000.Tests'
+        run: dotnet test "CsvProc9000.Tests/CsvProc9000.Tests.csproj" --collect:"XPlat Code Coverage" --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverage' /p:SkipAutoProps=true
 
       - name: Coverage
         uses: codecov/codecov-action@v2
