@@ -1,4 +1,4 @@
-<img alt="logo" src="src/CsvProc9000.UI/Resources/AppIcon/appicon.png" width="150">
+<img alt="logo" src="src/CsvProc9000.UI.Wpf/Resources/AppIcon/appicon.png" width="150">
 
 # 🗃 CsvProc9000
 
