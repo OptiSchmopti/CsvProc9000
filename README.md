@@ -1,3 +1,5 @@
+<img alt="logo" src="src/CsvProc9000.UI/Resources/AppIcon/appicon.png" width="150">
+
 # 🗃 CsvProc9000
 
 [![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -10,7 +12,13 @@
 
 **CsvProc9000** is a light-weight, rule-based CSV-Processor. It watches a given Inbox-Folder for you and processes - based on the given rules - any new CSV-File that it catches and outputs it anywhere you want.
 
+## ⚠️ Support
+
+Both the service and the UI application are currently only supported on 64 Bit Windows!
+
 ## 🖥️ Installation
+
+### Service
 
 Go to the [Releases](https://github.com/OptiSchmopti/CsvProc9000/releases) and select a Release that you want to use. Generally the lastest release is recommended, because it has all the latest Fixes and Features.  
 Attached to the Release you'll find a `CsvProc9000-vX_X_X.zip` which contains:
@@ -26,14 +34,35 @@ If there are any issues with starting the service, check out the log-file that i
 
 - Forgot to configure the Inbox/Outbox folders
 
+### UI
+
+A new addition to the _CsvProc9000_ family is the UI. It currently provides an easier way to configure your services configuration.  
+  
+To install it you simply have to go to the [Releases](https://github.com/OptiSchmopti/CsvProc9000/releases) and select a release that you want to use.  
+Generally the lastest release is recommended, because it has all the latest Fixes and Features.  
+Attached to the Release you'll find a `CsvProc9000.UI-vX_X_X.zip` which contains the executable of the UI (amongst other files).  
+  
+Simply extract the files anywhere you want the application to be located, and then double click the `CsvProc9000.UI.exe` file to run it.
+
 ## 🖱️ Update
 
-To update the service you can simply do the following steps:
+### Service
+
+To update the service you can simply follow these steps:
 
 1. Stop the Service
 2. Replace the `.exe` file with the new one
 3. Change the Configuration according to any breaking changes, if any
 4. Start the Service again
+
+### UI
+
+To update the UI you can simply follow these steps:
+
+1. Close the UI if you haven't already done that
+2. Delete the current installation files
+3. Download and extract the new files
+4. Run the application
 
 ## 🛠️ Configuration
 
@@ -48,11 +77,15 @@ Based on this configuration, here is a simple example on how this configuration 
 
 On the left side you can see the input and on the right the output.  
 Based on the rules, only the 3rd row meets all conditions (`SomeField`=`SomeValue` and `SomeOtherField`=`1337`).  
-Because of that all other rows, but the 3rd, are unaffected by any changes. In the 3rd you can see, that in the Output, `SomeOtherField` got changed to the value `42` and a new field `Other Field` with the value `123` has been added. Every other row has an empty value for this new field.
+Because of that all other rows, but the 3rd, are unaffected by any changes. In the 3rd you can see, that in the Output, `SomeOtherField` got changed to the value `42` and a new field `Other Field` with the value `123` has been added. Every other row has an empty value for this new field.  
+  
+### UI
+
+You can achieve the same with the new UI now too. Simply download and install the application, run it and choose "Config".
 
 ## ⌨️ Developing
 
-To develop and work with CsvProc9000 you just need to clone this Repo somewhere on your PC and then open the Solution or the complete Source-Folder (under `src`) with your favorite IDE. No additional tools required.  
+To develop and work with CsvProc9000 you just need to clone this Repo somewhere on your PC and then open the Solution or the complete Source-Folder (under `src`) with your favorite IDE. No additional tools required. You might need to restore the needed workloads though (use `dotnet restore workload` in the `./src` directory).  
   
 Before you can start, you should restore all NuGet-Packages using `dotnet restore` if that's not done for you by your IDE.
 
