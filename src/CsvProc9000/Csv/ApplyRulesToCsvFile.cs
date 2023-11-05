@@ -53,8 +53,8 @@ namespace CsvProc9000.Csv
             if (rule.Conditions == null || !rule.Conditions.Any())
             {
                 _logger.LogWarning(
-                    "T-{ThreadId} J-{JobId}# Skipping Rule at index {Index} because it has no conditions!",
-                    jobThreadId, jobId, IndexOfRule(rule));
+                    "T-{ThreadId} J-{JobId}# Skipping rule '{RuleName}' because it has no conditions!",
+                    jobThreadId, jobId, rule.Name);
 
                 return;
             }
@@ -73,14 +73,14 @@ namespace CsvProc9000.Csv
             if (!MeetsRowConditions(row, rule))
             {
                 _logger.LogTrace(
-                    "T-{ThreadId} J-{JobId}# Row at Index {RowIndex} does not meet conditions of rule at index {RuleIndex}",
-                    jobThreadId, jobId, IndexOfRow(row, file), IndexOfRule(rule));
+                    "T-{ThreadId} J-{JobId}# Row at Index {RowIndex} does not meet conditions of rule '{RuleName}'",
+                    jobThreadId, jobId, IndexOfRow(row, file), rule.Name);
                 return;
             }
 
             _logger.LogTrace(
-                "T-{ThreadId} J-{JobId}# Row at index {RowIndex} meets rule at index {RuleIndex}. Applying change(s)...",
-                jobThreadId, jobId, IndexOfRow(row, file), IndexOfRule(rule));
+                "T-{ThreadId} J-{JobId}# Row at index {RowIndex} meets rule '{RuleName}'. Applying change(s)...",
+                jobThreadId, jobId, IndexOfRow(row, file), rule.Name);
 
             foreach (var change in rule.Changes)
                 try
@@ -106,8 +106,8 @@ namespace CsvProc9000.Csv
             if (string.IsNullOrWhiteSpace(change.Field))
             {
                 _logger.LogWarning(
-                    "T-{ThreadId} J-{JobId}# Not applying change at index {ChangeIndex} for rule at index {RuleIndex} because no field name given",
-                    jobThreadId, jobId, IndexOfChange(rule, change), IndexOfRule(rule));
+                    "T-{ThreadId} J-{JobId}# Not applying change at index {ChangeIndex} for rule '{RuleName}' because no field name given",
+                    jobThreadId, jobId, IndexOfChange(rule, change), rule.Name);
 
                 return;
             }
@@ -174,11 +174,6 @@ namespace CsvProc9000.Csv
             }
 
             return meetsConditions;
-        }
-
-        private int IndexOfRule(Rule rule)
-        {
-            return _processorOptions.Rules.IndexOf(rule);
         }
 
         private static int IndexOfRow(CsvRow row, CsvFile file)
