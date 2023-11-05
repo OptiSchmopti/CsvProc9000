@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>disable</Nullable>
+        <UseWPF>true</UseWPF>
+        <RootNamespace>CsvProc9000.UI.Wpf</RootNamespace>
+        
+        <ApplicationIcon>Resources/AppIcon/appicon.ico</ApplicationIcon>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="7.0.100"/>
+        <PackageReference Include="WindowsAPICodePackShell" Version="7.0.4"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="Components\FolderSelect.razor"/>
+        <AdditionalFiles Include="Pages\Configure.razor"/>
+        <AdditionalFiles Include="Pages\EditRule.razor"/>
+        <AdditionalFiles Include="Pages\Index.razor"/>
+        <AdditionalFiles Include="Shared\MainLayout.razor"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <MauiAsset Include="wwwroot\css\app.css"/>
+        <MauiAsset Include="wwwroot\css\bootstrap\bootstrap.min.css"/>
+        <MauiAsset Include="wwwroot\css\bootstrap\bootstrap.min.css.map"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\FONT-LICENSE"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\css\open-iconic-bootstrap.min.css"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\fonts\open-iconic.eot"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\fonts\open-iconic.otf"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\fonts\open-iconic.svg"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\fonts\open-iconic.ttf"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\font\fonts\open-iconic.woff"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\ICON-LICENSE"/>
+        <MauiAsset Include="wwwroot\css\open-iconic\README.md"/>
+        <MauiAsset Include="wwwroot\favicon.ico"/>
+        <MauiAsset Include="wwwroot\index.html"/>
+        
+        <MauiFont Include="wwwroot\css\Quicksand-VariableFont_wght.ttf" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CsvProc9000.Model\CsvProc9000.Model.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Dialogues\WindowsFolderPicker.cs">
+            <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiIcon Include="Resources\AppIcon\appicon.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiImage Include="Resources\AppIcon\appicon.png" />
+    </ItemGroup>
+</Project>
