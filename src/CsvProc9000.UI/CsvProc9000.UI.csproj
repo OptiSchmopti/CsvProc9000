@@ -54,4 +54,11 @@
       <ProjectReference Include="..\CsvProc9000.Model\CsvProc9000.Model.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <MauiPlatformSpecificFolder Remove="Platforms\Android\" />
+      <MauiPlatformSpecificFolder Remove="Platforms\iOS\" />
+      <MauiPlatformSpecificFolder Remove="Platforms\MacCatalyst\" />
+      <MauiPlatformSpecificFolder Remove="Platforms\Tizen\" />
+    </ItemGroup>
+
 </Project>
