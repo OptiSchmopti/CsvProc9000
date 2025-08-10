@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Xunit;
@@ -183,7 +184,7 @@ public class CsvProcessJobWorkerTests
 
     private static (ArrangeContext<CsvProcessJobWorker>, CsvProcessorOptions) CreateContext()
     {
-        var options = new CsvProcessorOptions();
+        var options = new CsvProcessorOptions { OutboxRules = [new OutboxRule { Name = "Fallback", Outbox = "something" }] };
         var optionsMock = new Mock<IOptions<CsvProcessorOptions>>();
         optionsMock
             .SetupGet(opt => opt.Value)
