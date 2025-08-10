@@ -1,9 +1,8 @@
 ﻿using CsvHelper;
 
-namespace CsvProc9000.Csv.Contracts
+namespace CsvProc9000.Csv.Contracts;
+
+internal interface ICsvWriterFactory
 {
-    internal interface ICsvWriterFactory
-    {
-        IWriter Create(string file, string delimiter, string charset);
-    }
+    IWriter Create(string file, string delimiter, string charset);
 }

@@ -2,32 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CsvProc9000.Jobs
+namespace CsvProc9000.Jobs;
+
+internal sealed class JobPool : IJobPool
 {
-    internal sealed class JobPool : IJobPool
+    private readonly List<IJob> _jobs = new();
+
+    public void Add(IJob job)
     {
-        private readonly List<IJob> _jobs = new();
+        lock (_jobs)
+            _jobs.Add(job);
+    }
 
-        public void Add(IJob job)
+    public bool TryGet<T>(out T job) where T : IJob
+    {
+        lock (_jobs)
         {
-            lock (_jobs)
-                _jobs.Add(job);
-        }
+            job = _jobs
+                .OfType<T>()
+                .FirstOrDefault();
 
-        public bool TryGet<T>(out T job) where T : IJob
-        {
-            lock (_jobs)
-            {
-                job = _jobs
-                    .OfType<T>()
-                    .FirstOrDefault();
+            var found = job != null;
+            if (found)
+                _jobs.Remove(job);
 
-                var found = job != null;
-                if (found)
-                    _jobs.Remove(job);
-
-                return found;
-            }
+            return found;
         }
     }
 }

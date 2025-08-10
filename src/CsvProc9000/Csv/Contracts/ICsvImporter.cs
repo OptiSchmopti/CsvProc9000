@@ -3,10 +3,9 @@ using CsvProc9000.Model.Csv;
 using JetBrains.Annotations;
 using System.Threading.Tasks;
 
-namespace CsvProc9000.Csv.Contracts
+namespace CsvProc9000.Csv.Contracts;
+
+public interface ICsvImporter
 {
-    public interface ICsvImporter
-    {
-        Task<Result<CsvFile>> ImportAsync([NotNull] string fileName, [NotNull] string delimiter);
-    }
+    Task<Result<CsvFile>> ImportAsync([NotNull] string fileName, [NotNull] string delimiter);
 }

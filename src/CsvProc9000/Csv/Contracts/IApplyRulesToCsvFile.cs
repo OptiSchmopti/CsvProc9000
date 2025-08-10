@@ -1,10 +1,9 @@
 ﻿using CsvProc9000.Model.Csv;
 using System;
 
-namespace CsvProc9000.Csv.Contracts
+namespace CsvProc9000.Csv.Contracts;
+
+public interface IApplyRulesToCsvFile
 {
-    public interface IApplyRulesToCsvFile
-    {
-        void Apply(CsvFile csvFile, Guid jobId, Guid jobThreadId);
-    }
+    void Apply(CsvFile csvFile, Guid jobId, Guid jobThreadId);
 }

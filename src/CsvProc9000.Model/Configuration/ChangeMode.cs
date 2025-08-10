@@ -1,8 +1,7 @@
-﻿namespace CsvProc9000.Model.Configuration
+﻿namespace CsvProc9000.Model.Configuration;
+
+public enum ChangeMode
 {
-    public enum ChangeMode
-    {
-        Add,
-        AddOrUpdate
-    }
+    Add,
+    AddOrUpdate
 }

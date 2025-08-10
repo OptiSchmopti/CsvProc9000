@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading;
 
-namespace CsvProc9000.Jobs.Contracts
+namespace CsvProc9000.Jobs.Contracts;
+
+internal interface IJobThread
 {
-    internal interface IJobThread
-    {
-        Guid ThreadId { get; }
-        void Start(CancellationToken stoppingToken);
-    }
+    Guid ThreadId { get; }
+    void Start(CancellationToken stoppingToken);
 }

@@ -2,23 +2,22 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CsvProc9000.Jobs
+namespace CsvProc9000.Jobs;
+
+[ExcludeFromCodeCoverage] // simple DI-Factory
+internal sealed class CsvProcessJobThreadFactory : ICsvProcessJobThreadFactory
 {
-    [ExcludeFromCodeCoverage] // simple DI-Factory
-    internal sealed class CsvProcessJobThreadFactory : ICsvProcessJobThreadFactory
+    private readonly IServiceProvider _serviceProvider;
+
+    public CsvProcessJobThreadFactory(
+        [JetBrains.Annotations.NotNull] IServiceProvider serviceProvider)
     {
-        private readonly IServiceProvider _serviceProvider;
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+    }
 
-        public CsvProcessJobThreadFactory(
-            [JetBrains.Annotations.NotNull] IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        }
-
-        public ICsvProcessJobThread Create()
-        {
-            var thread = (ICsvProcessJobThread)_serviceProvider.GetService(typeof(ICsvProcessJobThread));
-            return thread;
-        }
+    public ICsvProcessJobThread Create()
+    {
+        var thread = (ICsvProcessJobThread)_serviceProvider.GetService(typeof(ICsvProcessJobThread));
+        return thread;
     }
 }

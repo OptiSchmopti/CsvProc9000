@@ -8,46 +8,45 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CsvProc9000.BackgroundServices
+namespace CsvProc9000.BackgroundServices;
+
+internal sealed class CsvProcessJobThreadSpawnerBackgroundService : BackgroundService
 {
-    internal sealed class CsvProcessJobThreadSpawnerBackgroundService : BackgroundService
+    private readonly CsvProcessorOptions _csvProcessorOptions;
+
+    private readonly List<IDisposable> _disposables = new();
+    private readonly ICsvProcessJobThreadFactory _jobThreadFactory;
+
+    public CsvProcessJobThreadSpawnerBackgroundService(
+        [NotNull] IOptions<CsvProcessorOptions> csvProcessorOptions,
+        [NotNull] ICsvProcessJobThreadFactory jobThreadFactory)
     {
-        private readonly CsvProcessorOptions _csvProcessorOptions;
+        _jobThreadFactory = jobThreadFactory ?? throw new ArgumentNullException(nameof(jobThreadFactory));
+        _csvProcessorOptions = csvProcessorOptions.Value ??
+                               throw new ArgumentNullException(nameof(csvProcessorOptions));
+    }
 
-        private readonly List<IDisposable> _disposables = new();
-        private readonly ICsvProcessJobThreadFactory _jobThreadFactory;
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        if (_csvProcessorOptions.JobThreadCount <= 0)
+            throw new ArgumentException(
+                $"'{nameof(_csvProcessorOptions.JobThreadCount)}' has to be a positive number above 0!");
 
-        public CsvProcessJobThreadSpawnerBackgroundService(
-            [NotNull] IOptions<CsvProcessorOptions> csvProcessorOptions,
-            [NotNull] ICsvProcessJobThreadFactory jobThreadFactory)
+        for (var index = 0; index < _csvProcessorOptions.JobThreadCount; index++)
         {
-            _jobThreadFactory = jobThreadFactory ?? throw new ArgumentNullException(nameof(jobThreadFactory));
-            _csvProcessorOptions = csvProcessorOptions.Value ??
-                                   throw new ArgumentNullException(nameof(csvProcessorOptions));
+            var jobThread = _jobThreadFactory.Create();
+            jobThread.Start(stoppingToken);
+            _disposables.Add(jobThread);
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            if (_csvProcessorOptions.JobThreadCount <= 0)
-                throw new ArgumentException(
-                    $"'{nameof(_csvProcessorOptions.JobThreadCount)}' has to be a positive number above 0!");
+        return Task.CompletedTask;
+    }
 
-            for (var index = 0; index < _csvProcessorOptions.JobThreadCount; index++)
-            {
-                var jobThread = _jobThreadFactory.Create();
-                jobThread.Start(stoppingToken);
-                _disposables.Add(jobThread);
-            }
+    public override void Dispose()
+    {
+        base.Dispose();
 
-            return Task.CompletedTask;
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            foreach (var disposable in _disposables)
-                disposable?.Dispose();
-        }
+        foreach (var disposable in _disposables)
+            disposable?.Dispose();
     }
 }

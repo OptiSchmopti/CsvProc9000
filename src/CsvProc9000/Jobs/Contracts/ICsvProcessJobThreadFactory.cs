@@ -1,7 +1,6 @@
-﻿namespace CsvProc9000.Jobs.Contracts
+﻿namespace CsvProc9000.Jobs.Contracts;
+
+internal interface ICsvProcessJobThreadFactory
 {
-    internal interface ICsvProcessJobThreadFactory
-    {
-        ICsvProcessJobThread Create();
-    }
+    ICsvProcessJobThread Create();
 }

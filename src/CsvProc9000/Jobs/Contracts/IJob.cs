@@ -1,19 +1,18 @@
 ﻿using System;
 
-namespace CsvProc9000.Jobs.Contracts
+namespace CsvProc9000.Jobs.Contracts;
+
+internal interface IJob
 {
-    internal interface IJob
-    {
-        Guid Id { get; }
+    Guid Id { get; }
 
-        DateTimeOffset Creation { get; }
+    DateTimeOffset Creation { get; }
 
-        DateTimeOffset ExecutionStart { get; }
+    DateTimeOffset ExecutionStart { get; }
 
-        DateTimeOffset ExecutionFinish { get; }
+    DateTimeOffset ExecutionFinish { get; }
 
-        void IndicateExecutionStart();
+    void IndicateExecutionStart();
 
-        void IndicateExecutionFinish();
-    }
+    void IndicateExecutionFinish();
 }

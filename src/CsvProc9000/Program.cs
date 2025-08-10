@@ -18,90 +18,89 @@ using System.Text;
 using System.Threading.Tasks;
 using ILogger = Serilog.ILogger;
 
-namespace CsvProc9000
+namespace CsvProc9000;
+
+[ExcludeFromCodeCoverage] // startup stuff
+public static class Program
 {
-    [ExcludeFromCodeCoverage] // startup stuff
-    public static class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
+        try
         {
-            try
-            {
-                await CreateHostBuilder(args).Build().RunAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Application start-up failed!\n{ex}");
-                Log.Fatal(ex, "Application start-up failed!");
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+            await CreateHostBuilder(args).Build().RunAsync();
         }
-
-        private static IHostBuilder CreateHostBuilder(string[] args)
+        catch (Exception ex)
         {
-            return Host
-                .CreateDefaultBuilder(args)
-                .UseWindowsService()
-                .ConfigureLogging((context, builder) =>
-                {
-                    builder.ClearProviders();
-
-                    var logger = ConfigureSerilogLogging(context.Configuration);
-                    builder.AddSerilog(logger);
-
-                    builder.AddFilter("Microsoft", LogLevel.Warning);
-                    builder.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Warning);
-                })
-                .ConfigureServices(ConfigureServices);
+            Console.WriteLine($"Application start-up failed!\n{ex}");
+            Log.Fatal(ex, "Application start-up failed!");
         }
-
-        private static ILogger ConfigureSerilogLogging(IConfiguration configuration)
+        finally
         {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(
-                    $"{AppDomain.CurrentDomain.BaseDirectory}/logs/application-log.log", 
-                    fileSizeLimitBytes: null, 
-                    retainedFileCountLimit: null, 
-                    rollingInterval: RollingInterval.Day)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-
-            Log.Logger = logger;
-            return logger;
+            Log.CloseAndFlush();
         }
+    }
 
-        private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
-        {
-            var processorOptionsSection = context.Configuration.GetSection("CsvProcessor");
-            services.Configure<CsvProcessorOptions>(processorOptionsSection);
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host
+            .CreateDefaultBuilder(args)
+            .UseWindowsService()
+            .ConfigureLogging((context, builder) =>
+            {
+                builder.ClearProviders();
 
-            services.AddSingleton<IFileSystem, FileSystem>();
+                var logger = ConfigureSerilogLogging(context.Configuration);
+                builder.AddSerilog(logger);
 
-            services.AddSingleton<IApplyRulesToCsvFile, ApplyRulesToCsvFile>();
-            services.AddSingleton<ICsvExporter, CsvExporter>();
-            services.AddSingleton<ICsvImporter, CsvImporter>();
-            services.AddSingleton<ICsvWriterFactory, CsvWriterFactory>();
-            services.AddSingleton<ICsvReaderFactory, CsvReaderFactory>();
+                builder.AddFilter("Microsoft", LogLevel.Warning);
+                builder.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Warning);
+            })
+            .ConfigureServices(ConfigureServices);
+    }
 
-            services.AddSingleton<IJobPool, JobPool>();
-            services.AddTransient<ICsvProcessJobThread, CsvProcessJobThread>();
-            services.AddTransient<ICsvProcessJobWorker, CsvProcessJobWorker>();
+    private static ILogger ConfigureSerilogLogging(IConfiguration configuration)
+    {
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File(
+                $"{AppDomain.CurrentDomain.BaseDirectory}/logs/application-log.log", 
+                fileSizeLimitBytes: null, 
+                retainedFileCountLimit: null, 
+                rollingInterval: RollingInterval.Day)
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
 
-            services.AddSingleton<ICsvProcessJobThreadFactory, CsvProcessJobThreadFactory>();
+        Log.Logger = logger;
+        return logger;
+    }
 
-            services.AddSingleton<IFileHelper, FileHelper>();
+    private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
+    {
+        var processorOptionsSection = context.Configuration.GetSection("CsvProcessor");
+        services.Configure<CsvProcessorOptions>(processorOptionsSection);
 
-            services.AddHostedService<CsvFileWatcherBackgroundService>();
-            services.AddHostedService<CsvExistingFileWatcherBackgroundService>();
-            services.AddHostedService<CsvProcessJobThreadSpawnerBackgroundService>();
+        services.AddSingleton<IFileSystem, FileSystem>();
+
+        services.AddSingleton<IApplyRulesToCsvFile, ApplyRulesToCsvFile>();
+        services.AddSingleton<ICsvExporter, CsvExporter>();
+        services.AddSingleton<ICsvImporter, CsvImporter>();
+        services.AddSingleton<ICsvWriterFactory, CsvWriterFactory>();
+        services.AddSingleton<ICsvReaderFactory, CsvReaderFactory>();
+
+        services.AddSingleton<IJobPool, JobPool>();
+        services.AddTransient<ICsvProcessJobThread, CsvProcessJobThread>();
+        services.AddTransient<ICsvProcessJobWorker, CsvProcessJobWorker>();
+
+        services.AddSingleton<ICsvProcessJobThreadFactory, CsvProcessJobThreadFactory>();
+
+        services.AddSingleton<IFileHelper, FileHelper>();
+
+        services.AddHostedService<CsvFileWatcherBackgroundService>();
+        services.AddHostedService<CsvExistingFileWatcherBackgroundService>();
+        services.AddHostedService<CsvProcessJobThreadSpawnerBackgroundService>();
             
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        }
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 }

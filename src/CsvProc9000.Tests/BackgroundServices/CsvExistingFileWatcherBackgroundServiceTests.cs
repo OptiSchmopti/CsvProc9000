@@ -12,61 +12,60 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CsvProc9000.Tests.BackgroundServices
+namespace CsvProc9000.Tests.BackgroundServices;
+
+public class CsvExistingFileWatcherBackgroundServiceTests
 {
-    public class CsvExistingFileWatcherBackgroundServiceTests
+    [Fact]
+    public void Be_Of_Needed_Base_Class()
     {
-        [Fact]
-        public void Be_Of_Needed_Base_Class()
-        {
-            var context = CreateContext();
-            var sut = context.Build();
+        var context = CreateContext();
+        var sut = context.Build();
 
-            sut
-                .Should()
-                .BeAssignableTo<BackgroundService>();
-        }
+        sut
+            .Should()
+            .BeAssignableTo<BackgroundService>();
+    }
 
-        [Fact]
-        public async Task Add_Previously_Existing_Files_To_Pool()
-        {
-            var context = CreateContext();
-            var sut = context.Build();
+    [Fact]
+    public async Task Add_Previously_Existing_Files_To_Pool()
+    {
+        var context = CreateContext();
+        var sut = context.Build();
 
-            const string file = "some file";
-            var fileInfoMock = new Mock<IFileInfo>();
+        const string file = "some file";
+        var fileInfoMock = new Mock<IFileInfo>();
 
-            context
-                .For<IFileSystem>()
-                .Setup(fileSystem => fileSystem.FileInfo.FromFileName(file))
-                .Returns(fileInfoMock.Object);
+        context
+            .For<IFileSystem>()
+            .Setup(fileSystem => fileSystem.FileInfo.FromFileName(file))
+            .Returns(fileInfoMock.Object);
 
-            context
-                .For<IFileSystem>()
-                .Setup(fileSystem => fileSystem.Directory.GetFiles(It.IsAny<string>(), "*.csv"))
-                .Returns(new[] { file });
+        context
+            .For<IFileSystem>()
+            .Setup(fileSystem => fileSystem.Directory.GetFiles(It.IsAny<string>(), "*.csv"))
+            .Returns(new[] { file });
 
-            await sut.StartAsync(CancellationToken.None);
+        await sut.StartAsync(CancellationToken.None);
 
-            context
-                .For<IJobPool>()
-                .Verify(pool =>
-                    pool.Add(It.Is<CsvProcessJob>(job =>
-                        job.TargetFile == fileInfoMock.Object)), Times.Once);
-        }
+        context
+            .For<IJobPool>()
+            .Verify(pool =>
+                pool.Add(It.Is<CsvProcessJob>(job =>
+                    job.TargetFile == fileInfoMock.Object)), Times.Once);
+    }
 
-        private static ArrangeContext<CsvExistingFileWatcherBackgroundService> CreateContext()
-        {
-            var options = new CsvProcessorOptions();
-            var optionsMock = new Mock<IOptions<CsvProcessorOptions>>();
-            optionsMock
-                .SetupGet(opt => opt.Value)
-                .Returns(options);
+    private static ArrangeContext<CsvExistingFileWatcherBackgroundService> CreateContext()
+    {
+        var options = new CsvProcessorOptions();
+        var optionsMock = new Mock<IOptions<CsvProcessorOptions>>();
+        optionsMock
+            .SetupGet(opt => opt.Value)
+            .Returns(options);
 
-            var context = new ArrangeContext<CsvExistingFileWatcherBackgroundService>();
-            context.Use(optionsMock);
+        var context = new ArrangeContext<CsvExistingFileWatcherBackgroundService>();
+        context.Use(optionsMock);
 
-            return context;
-        }
+        return context;
     }
 }

@@ -2,15 +2,14 @@
 using JetBrains.Annotations;
 using System.Threading.Tasks;
 
-namespace CsvProc9000.Csv.Contracts
+namespace CsvProc9000.Csv.Contracts;
+
+public interface ICsvExporter
 {
-    public interface ICsvExporter
-    {
-        Task ExportAsync(
-            [NotNull] CsvFile file,
-            [NotNull] string destinationFileName,
-            [NotNull] string delimiter,
-            [NotNull] string charset,
-            bool wrapValuesInQuotes = false);
-    }
+    Task ExportAsync(
+        [NotNull] CsvFile file,
+        [NotNull] string destinationFileName,
+        [NotNull] string delimiter,
+        [NotNull] string charset,
+        bool wrapValuesInQuotes = false);
 }

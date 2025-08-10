@@ -7,30 +7,29 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
-namespace CsvProc9000.Csv
+namespace CsvProc9000.Csv;
+
+[ExcludeFromCodeCoverage] // simple factory
+internal sealed class CsvWriterFactory : ICsvWriterFactory
 {
-    [ExcludeFromCodeCoverage] // simple factory
-    internal sealed class CsvWriterFactory : ICsvWriterFactory
+    private readonly IFileHelper _fileHelper;
+
+    public CsvWriterFactory([NotNull] IFileHelper fileHelper)
     {
-        private readonly IFileHelper _fileHelper;
-
-        public CsvWriterFactory([NotNull] IFileHelper fileHelper)
-        {
-            _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
-        }
+        _fileHelper = fileHelper ?? throw new ArgumentNullException(nameof(fileHelper));
+    }
         
-        public IWriter Create(string file, string delimiter, string charset)
+    public IWriter Create(string file, string delimiter, string charset)
+    {
+        var encoding = _fileHelper.GetEncodingFromCharsetString(charset);
+        var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            var encoding = _fileHelper.GetEncodingFromCharsetString(charset);
-            var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = delimiter,
-                Encoding = encoding
-            };
+            Delimiter = delimiter,
+            Encoding = encoding
+        };
 
-            var streamWriter = new StreamWriter(file, false, encoding);
-            var writer = new CsvWriter(streamWriter, csvConfiguration);
-            return writer;
-        }
+        var streamWriter = new StreamWriter(file, false, encoding);
+        var writer = new CsvWriter(streamWriter, csvConfiguration);
+        return writer;
     }
 }
