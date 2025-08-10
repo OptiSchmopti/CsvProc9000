@@ -8,6 +8,10 @@
         <RootNamespace>CsvProc9000.UI.Wpf</RootNamespace>
         
         <ApplicationIcon>Resources/AppIcon/appicon.ico</ApplicationIcon>
+
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
 
     <ItemGroup>
