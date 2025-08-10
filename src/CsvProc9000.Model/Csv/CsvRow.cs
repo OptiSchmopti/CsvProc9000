@@ -70,7 +70,7 @@ public class CsvRow
                 // first we select every field with the desired
                 .Where(field => field.Column.Name == condition.Field)
                 // then we check if those fields have the desired value
-                .Where(field => field.Value == condition.Value);
+                .Where(field => AppliesCondition(field.Value, condition.Value, condition.CheckMode));
 
             var anyFieldMatchesCondition = potentialFields.Any();
 
@@ -92,13 +92,25 @@ public class CsvRow
              *   --> meetsConditions = false
              *
              * - case: meetsConditions = false, anyFieldMatchesCondition = false
-             *   nothing to explain here i guess
+             *   nothing to explain here I guess
              *   --> meetsConditions = false
              */
             meetsConditions = meetsConditions && anyFieldMatchesCondition;
         }
 
         return meetsConditions;
+    }
+
+    private static bool AppliesCondition(string fieldValue, string conditionValue, CheckMode checkMode)
+    {
+        return checkMode switch
+        {
+            CheckMode.IsEqualTo => fieldValue == conditionValue,
+            CheckMode.StartsWith => fieldValue.StartsWith(conditionValue),
+            CheckMode.EndsWith => fieldValue.EndsWith(conditionValue),
+            CheckMode.Contains => fieldValue.Contains(conditionValue),
+            _ => throw new ArgumentOutOfRangeException(nameof(checkMode), checkMode, null),
+        };
     }
 
     private bool TryGetCandidateToChange(string fieldName, int? fieldIndex, out CsvField fieldToChange)

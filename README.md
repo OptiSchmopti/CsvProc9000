@@ -66,6 +66,8 @@ To update the UI you can simply follow these steps:
 
 ## 🛠️ Configuration
 
+⚠️ This part is completely out of date, sorry. I will update this soon(TM), I promise!  
+  
 CsvProc9000 is heavily dependent on it's configuration, because otherwise it wouldn't know how you'd like it to behave.  
 Here's an example configuration with information what everything does:
 

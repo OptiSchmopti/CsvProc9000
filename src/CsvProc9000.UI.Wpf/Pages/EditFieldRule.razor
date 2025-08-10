@@ -29,8 +29,9 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">If the Field ...</th>
-                <th scope="col">... has the Value ...</th>
+                <th scope="col">When the Field ...</th>
+                <th scope="col">... and the value ...</th>
+                <th scope="col">... with this value</th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -41,6 +42,14 @@
                 <tr>
                     <td>
                         <InputText @bind-Value="@condition.Field"></InputText>
+                    </td>
+                    <td>
+                        <InputSelect TValue="CheckMode" @bind-Value="@condition.CheckMode">
+                            @foreach (var mode in Enum.GetValues<CheckMode>())
+                            {
+                                <option value="@mode">@mode.ToString()</option>
+                            }
+                        </InputSelect>
                     </td>
                     <td>
                         <InputText @bind-Value="@condition.Value"></InputText>

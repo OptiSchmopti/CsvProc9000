@@ -11,4 +11,7 @@ public class Condition
 
     [UsedImplicitly]
     public string Value { get; set; }
+
+    [UsedImplicitly]
+    public CheckMode CheckMode { get; set; } = CheckMode.IsEqualTo;
 }

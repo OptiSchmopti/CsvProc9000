@@ -125,11 +125,11 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
         // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
         if (fittingOutboxRule == null)
         {
-            _logger.LogInformation("T-{ThreadId} J-{JobId}# Unable to determine outbox from conditions. Trying to use fallback {Fallback}...", jobThreadId, job.Id, fallback?.Outbox);
+            _logger.LogInformation("T-{ThreadId} J-{JobId}# Unable to determine outbox from conditions. Trying to use fallback '{OutboxName}' {Fallback}...", jobThreadId, fallback?.Name, job.Id, fallback?.Outbox);
             fittingOutboxRule = fallback ?? throw new InvalidOperationException($"Could not determine outbox for file '{job.TargetFile.FullName}' and no fallback defined!");
         }
-        else
-            _logger.LogInformation("T-{ThreadId} J-{JobId}# Determined outbox from conditions to be {Destination}...", jobThreadId, job.Id, fittingOutboxRule.Outbox);
+
+        _logger.LogInformation("T-{ThreadId} J-{JobId}# Determined outbox to be '{OutboxName}' at {Destination}...", jobThreadId, job.Id, fittingOutboxRule.Name, fittingOutboxRule.Outbox);
 
         return fittingOutboxRule;
     }
