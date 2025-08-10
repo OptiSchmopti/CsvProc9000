@@ -18,7 +18,6 @@
     <ItemGroup>
         <AdditionalFiles Include="Components\FolderSelect.razor"/>
         <AdditionalFiles Include="Pages\Configure.razor"/>
-        <AdditionalFiles Include="Pages\EditRule.razor"/>
         <AdditionalFiles Include="Pages\Index.razor"/>
         <AdditionalFiles Include="Shared\MainLayout.razor"/>
     </ItemGroup>

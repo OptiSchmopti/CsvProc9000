@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace CsvProc9000.Model.Configuration;
 
 [ExcludeFromCodeCoverage] // DTO
-public class Rule
+public class FieldRule
 {
     [UsedImplicitly]
     public string Name { get; set; }

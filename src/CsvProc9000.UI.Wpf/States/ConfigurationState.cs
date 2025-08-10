@@ -30,7 +30,7 @@ internal sealed class ConfigurationState : IConfigurationState
         try
         {
             var settings = _settingsManager.Load(SettingsDirectory);
-            settings.Rules ??= new List<Rule>();
+            settings.Rules ??= new List<FieldRule>();
             Settings = settings;
         }
         catch (Exception exception)
@@ -54,8 +54,14 @@ internal sealed class ConfigurationState : IConfigurationState
     }
 
     /// <inheritdoc />
-    public Rule GetRuleAt(int index)
+    public FieldRule GetFieldRuleAt(int index)
     {
         return Settings.Rules[index];
+    }
+
+    /// <inheritdoc />
+    public OutboxRule GetOutboxRuleAt(int index)
+    {
+        return Settings.OutboxRules[index];
     }
 }

@@ -7,8 +7,6 @@
 @inject IConfigurationState State
 @inject NavigationManager NavigationManager
 
-<!-- TODO: GO BACK TO HOME link! -->
-
 <h1>Configure</h1>
 
 <button class="btn btn-secondary btn-home oi oi-home" @onclick="GoToHome"></button>
@@ -41,7 +39,7 @@
                 Change the settings of your current service installation here:
             </p>
 
-            <div class="mt-2">
+            <div class="mt-2 row">
                 <h3>Inbox</h3>
 
                 <div class="row">
@@ -70,64 +68,49 @@
                 </div>
             </div>
 
-            <div class="mt-2">
-                <h3>Outbox</h3>
+            <div class="mt-2 row">
+                <h3>Outbox Rules</h3>
 
-                <div class="row">
-                    <div>
-                        Outbox directory:
-                    </div>
-                    <div>
-                        <FolderSelect DialogueTitle="Select the Outbox" @bind-SelectedPath="@State.Settings.Outbox"></FolderSelect>
-                    </div>
-                </div>
+                @for (var index = 0; index < State.Settings.OutboxRules.Count; index++)
+                {
+                    <div class="row mt-1">
+                        @{
+                            var ruleIndex = index;
+                            var rule = State.GetOutboxRuleAt(ruleIndex);
+                        }
 
-                <div class="row">
-                    <div>
-                        Outbox delimiter:
+                        <div>
+                            <button class="btn btn-secondary" @onclick="() => NavigateToEditOutboxRule(ruleIndex)">@rule.GetName()</button>
+                            <button class="btn btn-danger oi oi-minus float-end" @onclick="() => RemoveOutboxRule(rule)"></button>
+                        </div>
                     </div>
-                    <div>
-                        <InputText type="text" @bind-Value="@State.Settings.OutboxDelimiter"></InputText>
-                    </div>
-                </div>
+                }
 
-                <div class="row">
-                    <div>
-                        Outbox charset:
-                    </div>
-                    <div>
-                        <InputText type="text" @bind-Value="@State.Settings.OutboxFileCharset"></InputText>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div>
-                        Should the values in the Outbox-file be in quotes?
-                        <InputCheckbox @bind-Value="@State.Settings.OutboxValuesInQuotes"></InputCheckbox>
-                    </div>
+                <div class="mt-2">
+                    <button class="btn btn-success float-start oi oi-plus" @onclick="AddOutboxRule"></button>
                 </div>
             </div>
             
-            <div class="mt-2">
-                <h3>Rules</h3>
+            <div class="mt-2 row">
+                <h3>Field Rules</h3>
                 
                 @for (var index = 0; index < State.Settings.Rules.Count; index++)
                 {
                     <div class="row mt-1">
                         @{
                             var ruleIndex = index;
-                            var rule = State.GetRuleAt(ruleIndex);
+                            var rule = State.GetFieldRuleAt(ruleIndex);
                         }
                         
                         <div>
-                            <button class="btn btn-secondary" @onclick="() => NavigateToEditRule(ruleIndex)">@rule.GetName()</button>
-                            <button class="btn btn-danger oi oi-minus float-end" @onclick="() => RemoveRule(rule)"></button>
+                            <button class="btn btn-secondary" @onclick="() => NavigateToEditFieldRule(ruleIndex)">@rule.GetName()</button>
+                            <button class="btn btn-danger oi oi-minus float-end" @onclick="() => RemoveFieldRule(rule)"></button>
                         </div>
                     </div>
                 }
                 
                 <div class="mt-2">
-                    <button class="btn btn-success float-start oi oi-plus" @onclick="AddRule"></button>
+                    <button class="btn btn-success float-start oi oi-plus" @onclick="AddFieldRule"></button>
                 </div>
             </div>
         </div>
@@ -154,31 +137,53 @@
         State.ReadSettings();
     }
 
-    private void NavigateToEditRule(int ruleIndex)
+    private void NavigateToEditFieldRule(int ruleIndex)
     {
-        NavigationManager.NavigateTo($"/rule/{ruleIndex}");
+        NavigationManager.NavigateTo($"/field-rule/{ruleIndex}");
     }
 
-    private void RemoveRule(Rule rule)
+    private void RemoveFieldRule(FieldRule fieldRule)
     {
-        State.Settings.Rules.Remove(rule);
+        State.Settings.Rules.Remove(fieldRule);
     }
 
-    private void AddRule()
+    private void AddFieldRule()
     {
-        var newRule = new Rule
+        var newRule = new FieldRule
         {
             Name = "New Rule",
         };
         
         State.Settings.Rules.Add(newRule);
         
-        NavigateToEditRule(State.Settings.Rules.Count - 1);
+        NavigateToEditFieldRule(State.Settings.Rules.Count - 1);
     }
 
     private void SaveSettings()
     {
         State.WriteSettings(_makeBackup);
         GoToHome();
+    }
+
+    private void NavigateToEditOutboxRule(int ruleIndex)
+    {
+        NavigationManager.NavigateTo($"/outbox-rule/{ruleIndex}");
+    }
+
+    private void RemoveOutboxRule(OutboxRule rule)
+    {
+        State.Settings.OutboxRules.Remove(rule);
+    }
+
+    private void AddOutboxRule()
+    {
+        var newRule = new OutboxRule
+        {
+            Name = "New Rule",
+        };
+
+        State.Settings.OutboxRules.Add(newRule);
+
+        NavigateToEditOutboxRule(State.Settings.OutboxRules.Count - 1);
     }
 }

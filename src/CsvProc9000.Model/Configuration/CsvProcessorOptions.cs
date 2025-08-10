@@ -21,5 +21,5 @@ public class CsvProcessorOptions
     public List<OutboxRule> OutboxRules { get; set; } = [];
 
     [UsedImplicitly]
-    public List<Rule> Rules { get; set; }
+    public List<FieldRule> Rules { get; set; }
 }

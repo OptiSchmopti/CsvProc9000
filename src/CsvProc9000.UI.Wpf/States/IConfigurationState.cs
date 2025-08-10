@@ -23,15 +23,22 @@ internal interface IConfigurationState
     void ReadSettings();
 
     /// <summary>
-    ///     Gets the rule from the given index
+    ///     Gets the field rule from the given index
     /// </summary>
     /// <param name="index">The index to get the rule from</param>
     /// <returns>The rule that was gotten from the index</returns>
-    Rule GetRuleAt(int index);
+    FieldRule GetFieldRuleAt(int index);
+
+    /// <summary>
+    ///     Gets the outbox rule from the given index
+    /// </summary>
+    /// <param name="index">The index to get the rule from</param>
+    /// <returns>The rule that was gotten from the index</returns>
+    OutboxRule GetOutboxRuleAt(int index);
 
     /// <summary>
     ///     Writes the settings to the desired settings path
     /// </summary>
-    /// <param name="makeBackup">Whether or not a backup should be made</param>
+    /// <param name="makeBackup">Whether a backup should be made</param>
     void WriteSettings(bool makeBackup);
 }

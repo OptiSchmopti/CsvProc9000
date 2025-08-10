@@ -46,58 +46,58 @@ public class ApplyRulesToCsvFile : IApplyRulesToCsvFile
 
     private void ApplyRuleToFile(
         CsvFile csvFile,
-        Rule rule,
+        FieldRule fieldRule,
         Guid jobId,
         Guid jobThreadId)
     {
-        if (rule.Conditions == null || !rule.Conditions.Any())
+        if (fieldRule.Conditions == null || !fieldRule.Conditions.Any())
         {
             _logger.LogWarning(
                 "T-{ThreadId} J-{JobId}# Skipping rule '{RuleName}' because it has no conditions!",
-                jobThreadId, jobId, rule.Name);
+                jobThreadId, jobId, fieldRule.Name);
 
             return;
         }
 
         foreach (var row in csvFile.Rows)
-            ApplyRuleToRow(row, rule, csvFile, jobId, jobThreadId);
+            ApplyRuleToRow(row, fieldRule, csvFile, jobId, jobThreadId);
     }
 
     private void ApplyRuleToRow(
         CsvRow row,
-        Rule rule,
+        FieldRule fieldRule,
         CsvFile file,
         Guid jobId,
         Guid jobThreadId)
     {
-        if (!row.MeetsConditions(rule.Conditions))
+        if (!row.MeetsConditions(fieldRule.Conditions))
         {
             _logger.LogTrace(
                 "T-{ThreadId} J-{JobId}# Row at Index {RowIndex} does not meet conditions of rule '{RuleName}'",
-                jobThreadId, jobId, IndexOfRow(row, file), rule.Name);
+                jobThreadId, jobId, IndexOfRow(row, file), fieldRule.Name);
             return;
         }
 
         _logger.LogTrace(
             "T-{ThreadId} J-{JobId}# Row at index {RowIndex} meets rule '{RuleName}'. Applying change(s)...",
-            jobThreadId, jobId, IndexOfRow(row, file), rule.Name);
+            jobThreadId, jobId, IndexOfRow(row, file), fieldRule.Name);
 
-        foreach (var change in rule.Changes)
+        foreach (var change in fieldRule.Changes)
             try
             {
-                ApplyChangeToRow(row, rule, file, change, jobId, jobThreadId);
+                ApplyChangeToRow(row, fieldRule, file, change, jobId, jobThreadId);
             }
             catch (Exception e)
             {
                 _logger.LogError(e,
                     "T-{ThreadId} J-{JobId}# Error occured while applying change at index {ChangeIndex} to row at index {RowIndex}",
-                    jobThreadId, jobId, IndexOfChange(rule, change), IndexOfRow(row, file));
+                    jobThreadId, jobId, IndexOfChange(fieldRule, change), IndexOfRow(row, file));
             }
     }
 
     private void ApplyChangeToRow(
         CsvRow row,
-        Rule rule,
+        FieldRule fieldRule,
         CsvFile file,
         Change change,
         Guid jobId,
@@ -107,14 +107,14 @@ public class ApplyRulesToCsvFile : IApplyRulesToCsvFile
         {
             _logger.LogWarning(
                 "T-{ThreadId} J-{JobId}# Not applying change at index {ChangeIndex} for rule '{RuleName}' because no field name given",
-                jobThreadId, jobId, IndexOfChange(rule, change), rule.Name);
+                jobThreadId, jobId, IndexOfChange(fieldRule, change), fieldRule.Name);
 
             return;
         }
 
         _logger.LogTrace(
             "T-{ThreadId} J-{JobId}# Row at index {RowIndex}: Applying change at index {ChangeIndex}: Field={Field}, Value={Value}, Mode={Mode}, Index={Index}",
-            jobThreadId, jobId, IndexOfRow(row, file), IndexOfChange(rule, change), change.Field,
+            jobThreadId, jobId, IndexOfRow(row, file), IndexOfChange(fieldRule, change), change.Field,
             change.Value, change.Mode, change.FieldIndex);
 
         switch (change.Mode)
@@ -138,8 +138,8 @@ public class ApplyRulesToCsvFile : IApplyRulesToCsvFile
         return file.Rows.ToList().IndexOf(row);
     }
 
-    private static int IndexOfChange(Rule rule, Change change)
+    private static int IndexOfChange(FieldRule fieldRule, Change change)
     {
-        return rule.Changes.IndexOf(change);
+        return fieldRule.Changes.IndexOf(change);
     }
 }

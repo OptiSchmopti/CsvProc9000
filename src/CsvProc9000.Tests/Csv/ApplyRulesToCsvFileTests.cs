@@ -52,7 +52,7 @@ public class ApplyRulesToCsvFileTests
             .Should()
             .BeEmpty();
 
-        options.Rules = new List<Rule>();
+        options.Rules = new List<FieldRule>();
 
         sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
@@ -68,7 +68,7 @@ public class ApplyRulesToCsvFileTests
         var (context, options) = CreateContext();
         var sut = context.Build();
 
-        options.Rules = new List<Rule> { new() { Conditions = null } };
+        options.Rules = new List<FieldRule> { new() { Conditions = null } };
 
         var file = new CsvFile("some file");
 
@@ -79,7 +79,7 @@ public class ApplyRulesToCsvFileTests
             .Should()
             .BeEmpty();
 
-        options.Rules = new List<Rule> { new() { Conditions = new List<Condition>() } };
+        options.Rules = new List<FieldRule> { new() { Conditions = new List<Condition>() } };
 
         sut.Apply(file, Guid.NewGuid(), Guid.NewGuid());
 
@@ -98,7 +98,7 @@ public class ApplyRulesToCsvFileTests
         const string targetField = "SomeField";
         const string targetFieldValueCondition = "SomeValue";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -136,7 +136,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -178,7 +178,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -239,7 +239,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -293,7 +293,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -359,7 +359,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {
@@ -417,7 +417,7 @@ public class ApplyRulesToCsvFileTests
         const string targetFieldValueCondition = "SomeValue";
         const string targetFieldChangeValue = "this value changed";
 
-        options.Rules = new List<Rule>
+        options.Rules = new List<FieldRule>
         {
             new()
             {

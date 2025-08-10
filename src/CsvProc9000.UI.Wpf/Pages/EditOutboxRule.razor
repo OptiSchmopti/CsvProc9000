@@ -1,0 +1,138 @@
+﻿@page "/outbox-rule/{Index:int}"
+@using CsvProc9000.Model.Configuration
+@using CsvProc9000.UI.Wpf.States
+@using CsvProc9000.UI.Wpf.Components
+
+@inject IConfigurationState State
+@inject NavigationManager NavigationManager
+
+<h1>Edit Rule: @_outboxRule?.GetName()</h1>
+
+@if (_outboxRule == null)
+{
+    <p>There was an error loading the Rule...</p>
+    return;
+}
+
+<div>
+    <div class="row">
+        Name:
+        <InputText type="text" @bind-Value="@_outboxRule.Name"></InputText>
+    </div>
+
+    <div class="mt-2">
+        <h3>General</h3>
+
+        <p>
+            General stuff that applies to the outbox...
+        </p>
+
+        <div class="row">
+            <div>
+                Outbox directory:
+            </div>
+            <div>
+                <FolderSelect DialogueTitle="Select the Outbox" @bind-SelectedPath="@_outboxRule.Outbox"></FolderSelect>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                Outbox delimiter:
+            </div>
+            <div>
+                <InputText type="text" @bind-Value="@_outboxRule.OutboxDelimiter"></InputText>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                Outbox charset:
+            </div>
+            <div>
+                <InputText type="text" @bind-Value="@_outboxRule.OutboxFileCharset"></InputText>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                Should the values in the Outbox-file be in quotes?
+                <InputCheckbox @bind-Value="@_outboxRule.OutboxValuesInQuotes"></InputCheckbox>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <h3>Conditions</h3>
+
+        <p>
+            <b>All</b> the Conditions that must apply for <b>at least one</b> row ...
+        </p>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">If the Field ...</th>
+                <th scope="col">... has the Value ...</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var condition in _outboxRule.Conditions)
+            {
+                <tr>
+                    <td>
+                        <InputText @bind-Value="@condition.Field"></InputText>
+                    </td>
+                    <td>
+                        <InputText @bind-Value="@condition.Value"></InputText>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger oi oi-minus" @onclick="() => RemoveCondition(condition)"></button>
+                    </td>
+                </tr>
+            }
+
+            </tbody>
+        </table>
+
+        <div class="mt-2">
+            <button class="btn btn-success float-end oi oi-plus" @onclick="AddCondition"></button>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <button class="btn btn-primary float-start" @onclick="Ok">OK</button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Index { get; set; }
+
+    private OutboxRule _outboxRule;
+
+    protected override void OnInitialized()
+    {
+        _outboxRule = State.GetOutboxRuleAt(Index);
+        _outboxRule.Conditions ??= [];
+    }
+
+    private void RemoveCondition(Condition condition)
+    {
+        _outboxRule.Conditions.Remove(condition);
+    }
+
+    private void AddCondition()
+    {
+        _outboxRule.Conditions.Add(new Condition());
+    }
+
+    private void Ok()
+    {
+        NavigationManager.NavigateTo("/config");
+    }
+
+}

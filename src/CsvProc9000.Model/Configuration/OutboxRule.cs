@@ -8,6 +8,9 @@ namespace CsvProc9000.Model.Configuration;
 public class OutboxRule
 {
     [UsedImplicitly]
+    public string Name { get; set; }
+
+    [UsedImplicitly]
     public List<Condition> Conditions { get; set; }
 
     [UsedImplicitly]
@@ -21,4 +24,11 @@ public class OutboxRule
 
     [UsedImplicitly]
     public string OutboxFileCharset { get; set; } = "UTF-8";
+
+    public string GetName()
+    {
+        return string.IsNullOrWhiteSpace(Name)
+            ? "< Unknown >"
+            : Name;
+    }
 }
