@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,9 +39,5 @@
 
     <ItemGroup>
         <ProjectReference Include="..\CsvProc9000.Model\CsvProc9000.Model.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Options\" />
     </ItemGroup>
 </Project>
