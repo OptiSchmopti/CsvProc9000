@@ -18,16 +18,7 @@ public class CsvProcessorOptions
     public bool DeleteInboxFile { get; set; } = true;
 
     [UsedImplicitly]
-    public string Outbox { get; set; }
-
-    [UsedImplicitly]
-    public string OutboxDelimiter { get; set; }
-
-    [UsedImplicitly]
-    public bool OutboxValuesInQuotes { get; set; }
-
-    [UsedImplicitly]
-    public string OutboxFileCharset { get; set; } = "UTF-8";
+    public List<OutboxRule> OutboxRules { get; set; } = [];
 
     [UsedImplicitly]
     public List<Rule> Rules { get; set; }

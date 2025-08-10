@@ -48,13 +48,18 @@ internal sealed class CsvProcessJobThread : ICsvProcessJobThread
 
     private async Task ProcessAsync()
     {
+        if (!_jobPool.TryGet<CsvProcessJob>(out var job)) return;
+
         try
         {
-            if (!_jobPool.TryGet<CsvProcessJob>(out var job)) return;
-
             IndicateExecutionStart(job);
             await _worker.WorkOnAsync(ThreadId, job);
             IndicateExecutionFinish(job);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "T-{ThreadId} J-{JobId}# Error while working on job with target {JobFile}...",
+                ThreadId, job.Id, job.TargetFile);
         }
         finally
         {

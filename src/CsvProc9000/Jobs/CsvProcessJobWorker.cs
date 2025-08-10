@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CsvProc9000.Jobs;
@@ -28,8 +29,7 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
         [NotNull] ICsvExporter csvExporter,
         [NotNull] IFileSystem fileSystem)
     {
-        _csvProcessorOptions = csvProcessorOptions.Value ??
-                               throw new ArgumentNullException(nameof(csvProcessorOptions));
+        _csvProcessorOptions = csvProcessorOptions.Value;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _csvImporter = csvImporter ?? throw new ArgumentNullException(nameof(csvImporter));
         _applyRulesToCsvFile = applyRulesToCsvFile ?? throw new ArgumentNullException(nameof(applyRulesToCsvFile));
@@ -43,9 +43,11 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
 
         var file = await ImportFileAsync(job, jobThreadId);
 
+        var outboxRule = DetermineFittingOutboxRule(file, job, jobThreadId);
+
         _applyRulesToCsvFile.Apply(file, job.Id, jobThreadId);
 
-        var exported = await ExportAsync(file, job, jobThreadId);
+        var exported = await ExportAsync(outboxRule, file, job, jobThreadId);
 
         if (exported)
             DeleteOriginal(job, jobThreadId);
@@ -104,13 +106,42 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
         return csvFile;
     }
 
+    private OutboxRule DetermineFittingOutboxRule(CsvFile file, CsvProcessJob job, Guid jobThreadId)
+    {
+        var outboxRules = _csvProcessorOptions.OutboxRules;
+
+        var fallback = outboxRules.FirstOrDefault(rule => rule.Conditions == null || !rule.Conditions.Any());
+        var outboxRulesWithoutFallback = outboxRules.Where(rule => rule != fallback);
+
+        var fittingOutboxRule = outboxRulesWithoutFallback
+            .Select(outboxRule => new
+            {
+                outboxRule,
+                anyRowMeetsConditions = file.Rows.Any(row => row.MeetsConditions(outboxRule.Conditions)),
+            })
+            .Where(x => x.anyRowMeetsConditions)
+            .Select(x => x.outboxRule).FirstOrDefault();
+
+        // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+        if (fittingOutboxRule == null)
+        {
+            _logger.LogInformation("T-{ThreadId} J-{JobId}# Unable to determine outbox from conditions. Trying to use fallback {Fallback}...", jobThreadId, job.Id, fallback?.Outbox);
+            fittingOutboxRule = fallback ?? throw new InvalidOperationException($"Could not determine outbox for file '{job.TargetFile.FullName}' and no fallback defined!");
+        }
+        else
+            _logger.LogInformation("T-{ThreadId} J-{JobId}# Determined outbox from conditions to be {Destination}...", jobThreadId, job.Id, fittingOutboxRule.Outbox);
+
+        return fittingOutboxRule;
+    }
+
     private async Task<bool> ExportAsync(
+        OutboxRule outboxRule,
         CsvFile file,
         CsvProcessJob job,
         Guid jobThreadId)
     {
         var fileName = job.TargetFile.Name;
-        var destinationFileName = _fileSystem.Path.Combine(_csvProcessorOptions.Outbox, fileName);
+        var destinationFileName = _fileSystem.Path.Combine(outboxRule.Outbox, fileName);
 
         try
         {
@@ -118,16 +149,17 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
                 jobThreadId, job.Id, destinationFileName);
 
             await _csvExporter.ExportAsync(
-                file, destinationFileName,
-                _csvProcessorOptions.OutboxDelimiter,
-                _csvProcessorOptions.OutboxFileCharset,
-                _csvProcessorOptions.OutboxValuesInQuotes);
+                file,
+                destinationFileName,
+                outboxRule.OutboxDelimiter,
+                outboxRule.OutboxFileCharset,
+                outboxRule.OutboxValuesInQuotes);
 
             return true;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            _logger.LogError(e, "T-{ThreadId} J-{JobId}# Export to {Destination} failed!",
+            _logger.LogError(exception, "T-{ThreadId} J-{JobId}# Export to {Destination} failed!",
                 jobThreadId, job.Id, destinationFileName);
 
             if (_fileSystem.File.Exists(destinationFileName))

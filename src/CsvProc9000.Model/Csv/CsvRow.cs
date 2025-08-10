@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CsvProc9000.Model.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace CsvProc9000.Model.Csv;
 
 // TODO: Move this logic into a service of some kind?
-[ExcludeFromCodeCoverage] // DTO - yes there's some logic here, but it's mostly tested through other test's
+[ExcludeFromCodeCoverage] // DTO - yes there's some logic here, but it's mostly tested through other tests
 public class CsvRow
 {
     private readonly List<CsvField> _fields = new();
@@ -53,6 +54,51 @@ public class CsvRow
 
         var changedField = fieldToChange with { Value = fieldValue };
         _fields.Insert(index, changedField);
+    }
+
+    public bool MeetsConditions(IEnumerable<Condition> conditions)
+    {
+        ArgumentNullException.ThrowIfNull(conditions);
+
+        var meetsConditions = true;
+
+        // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var condition in conditions)
+        {
+            var potentialFields =
+                Fields
+                // first we select every field with the desired
+                .Where(field => field.Column.Name == condition.Field)
+                // then we check if those fields have the desired value
+                .Where(field => field.Value == condition.Value);
+
+            var anyFieldMatchesCondition = potentialFields.Any();
+
+            /*
+             * the conditions are met, when we found any fields that match the conditions in that row
+             *
+             * for clarity, what that boolean operation down there does:
+             *
+             * - case: meetsConditions = true, anyFieldMatchesCondition = true
+             *   conditions were met, because at least on field meets the conditions in this row
+             *   --> meetsConditions = true
+             *
+             * - case: meetsConditions = true, anyFieldMatchesCondition = false
+             *   conditions are not met, because no field meets the conditions in this row
+             *   --> meetsConditions = false
+             *
+             * - case: meetsConditions = false, anyFieldMatchesCondition = true
+             *   conditions were not met before, but we need every condition to be met (AND link)
+             *   --> meetsConditions = false
+             *
+             * - case: meetsConditions = false, anyFieldMatchesCondition = false
+             *   nothing to explain here i guess
+             *   --> meetsConditions = false
+             */
+            meetsConditions = meetsConditions && anyFieldMatchesCondition;
+        }
+
+        return meetsConditions;
     }
 
     private bool TryGetCandidateToChange(string fieldName, int? fieldIndex, out CsvField fieldToChange)
