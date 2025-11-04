@@ -93,14 +93,15 @@ internal sealed class CsvProcessJobWorker : ICsvProcessJobWorker
         // TODO: I have to rethink this thing... it's weird...
         while (csvFile == null)
         {
-            var result =
-                await _csvImporter.ImportAsync(job.TargetFile.FullName, _csvProcessorOptions.InboxDelimiter);
+            var result = await _csvImporter.ImportAsync(job.TargetFile.FullName, _csvProcessorOptions.InboxDelimiter);
 
             if (result.IsSuccess)
                 csvFile = result.Value;
             else
-                _logger.LogWarning("T-{ThreadId} J-{JobId}# Import failed, because of '{Message}'. Retrying...",
-                    jobThreadId, job.Id, result.FailureMessage);
+            {
+                _logger.LogWarning("T-{ThreadId} J-{JobId}# Import failed, because of '{Message}'. Retrying after 500ms...", jobThreadId, job.Id, result.FailureMessage);
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
+            }
         }
 
         return csvFile;
